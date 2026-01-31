@@ -141,7 +141,7 @@ const initialProducts: Product[] = [
             name: 'Creality',
             username: 'creality_3d',
             badge: 'Maker',
-            instagram: 'creality3dofficial',
+            instagram: 'creality3d',
             credibility_score: 92,
             products: [], contributions: [], posts: []
         },
