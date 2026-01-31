@@ -37,15 +37,15 @@
 
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    @apply w-2;
+    @apply h-1.5;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-background-light;
+    @apply bg-transparent;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-primary/20 rounded-full;
+    @apply bg-primary/40 rounded-full transition-colors duration-300;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -90,7 +90,7 @@
 
   /* Badge styles */
   .badge {
-    @apply inline-flex items-center gap-2 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest;
+    @apply inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-black uppercase tracking-widest;
   }
 
   .badge-trust {
@@ -107,6 +107,10 @@
 
   .badge-maker {
     @apply badge bg-accent/10 text-accent;
+  }
+
+  .badge-observer {
+    @apply badge bg-slate-100 text-slate-500 font-black;
   }
 }
 

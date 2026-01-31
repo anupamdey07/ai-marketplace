@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '@/store/useProductStore';
 import Badge from '@/components/common/Badge';
 import TrustIndicator from '@/components/common/TrustIndicator';
@@ -11,9 +12,28 @@ export default function ProductPage() {
     const { slug } = useParams();
     const { products, upvoteProduct } = useProductStore();
     const { openCart } = useUIStore();
-    const { addItem } = useCartStore();
-
+    const { addItem, items: cartItems } = useCartStore();
     const product = products.find(p => p.slug === slug);
+    const [isSparkling, setIsSparkling] = useState(false);
+    const [upvotedId, setUpvotedId] = useState<string | null>(null);
+
+    const isProductInCart = cartItems.some(item => item.id === product?.id);
+
+    const handleAddToCart = () => {
+        if (!product) return;
+        setIsSparkling(true);
+        addItem(product);
+        setTimeout(() => {
+            setIsSparkling(false);
+            openCart();
+        }, 800);
+    };
+
+    const handleUpvote = (id: string) => {
+        setUpvotedId(id);
+        upvoteProduct(id);
+        setTimeout(() => setUpvotedId(null), 600);
+    };
 
     if (!product || product.status === 'Coming Soon') {
         return <ComingSoonPage />;
@@ -216,15 +236,37 @@ export default function ProductPage() {
                                     <span className="text-4xl font-bold text-primary">€{product.price}</span>
                                     <Badge type="new" label="Digital Assets Included" />
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        addItem(product);
-                                        openCart();
-                                    }}
-                                    className="btn-primary w-full py-4 text-lg mb-4"
+                                <motion.button
+                                    onClick={handleAddToCart}
+                                    disabled={isSparkling}
+                                    className="btn-primary w-full py-4 text-lg mb-4 relative overflow-hidden group"
                                 >
-                                    Get Project Kit
-                                </button>
+                                    <span className="flex items-center justify-center gap-2">
+                                        Get Project Kit
+                                        {isProductInCart && (
+                                            <motion.span
+                                                initial={{ scale: 0, rotate: -45 }}
+                                                animate={{ scale: 1, rotate: 0 }}
+                                                className="text-xs bg-white text-primary rounded-full w-5 h-5 flex items-center justify-center font-black"
+                                            >
+                                                +
+                                            </motion.span>
+                                        )}
+                                    </span>
+
+                                    <AnimatePresence>
+                                        {isSparkling && (
+                                            <motion.span
+                                                initial={{ opacity: 0, scale: 0, y: 10 }}
+                                                animate={{ opacity: 1, scale: 1.1, y: -15, rotate: [0, 15, -15, 0] }}
+                                                exit={{ opacity: 0, scale: 0 }}
+                                                className="absolute inset-0 flex items-center justify-center pointer-events-none text-xl"
+                                            >
+                                                ✨
+                                            </motion.span>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.button>
                                 {product.external_link && (
                                     <a
                                         href={product.external_link}
@@ -234,13 +276,29 @@ export default function ProductPage() {
                                     >
                                         Visit Official Project ↗
                                     </a>
-                                )}
-                                <button
-                                    onClick={() => upvoteProduct(product.id)}
-                                    className="btn-outline w-full py-4 text-lg bg-white border-primary"
-                                >
-                                    Upvote Project
-                                </button>
+                                ) || null}
+                                <div className="relative">
+                                    <motion.button
+                                        onClick={() => handleUpvote(product.id)}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="btn-outline w-full py-4 text-lg bg-white border-primary"
+                                    >
+                                        Upvote Project
+                                    </motion.button>
+
+                                    <AnimatePresence>
+                                        {upvotedId === product.id && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 0, scale: 0.5 }}
+                                                animate={{ opacity: [0, 1, 1, 0], y: -40, scale: [0.5, 1.2, 1.2, 1.5] }}
+                                                transition={{ duration: 0.8 }}
+                                                className="absolute inset-0 flex items-center justify-center pointer-events-none text-2xl"
+                                            >
+                                                👍
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             </div>
 
                             <div className="border-t border-background-light pt-8">

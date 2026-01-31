@@ -14,11 +14,11 @@ export type ProductCategory =
 export type PromptToProductSubcategory = 'Physical prompt boxes' | 'Custom 3D Printed Dropship';
 export type ThreeDPrintedSubcategory = 'Consumer 3D Printers' | '3D Printed Products';
 
-export type AssistantBoxSubcategory = 'Kids Learning' | 'Voice Assistants';
+export type AssistantBoxSubcategory = 'Kids Learning' | 'Voice Assistants' | 'Spiritual Companions';
 
 export type ProductSubcategory = PromptToProductSubcategory | ThreeDPrintedSubcategory | AssistantBoxSubcategory;
 
-export type UserBadge = 'Member' | 'Contributor' | 'Maker';
+export type UserBadge = 'Member' | 'Contributor' | 'Maker' | 'Observer';
 export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced';
 
 export interface Product {

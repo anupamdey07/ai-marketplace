@@ -24,6 +24,11 @@ const badgeConfig = {
         icon: '🏆',
         defaultLabel: 'Maker',
     },
+    Observer: {
+        className: 'badge-observer',
+        icon: '👁️',
+        defaultLabel: 'Observer',
+    },
     trust: {
         className: 'badge-trust',
         icon: '✓',
@@ -42,7 +47,9 @@ const badgeConfig = {
 };
 
 export default function Badge({ type, label, icon, className }: BadgeProps) {
-    const config = badgeConfig[type];
+    const config = badgeConfig[type as keyof typeof badgeConfig];
+
+    if (!config) return null;
 
     return (
         <span className={clsx(config.className, className)}>

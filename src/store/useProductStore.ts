@@ -13,6 +13,56 @@ interface ProductStore {
 // Initial mock data with updated categories and researched products
 const initialProducts: Product[] = [
     {
+        id: 'spiritual-001',
+        name: 'Krishna Companion Box',
+        category: 'Assistant Boxes',
+        subCategory: 'Spiritual Companions',
+        description: 'Krishna Companion Box brings ancient wisdom into your daily life through conversational AI. Ask questions about life, dharma, karma, and receive personalized guidance based on the Bhagavad Gita\'s 700 verses. Privacy-first edge AI ensures your spiritual journey stays personal.',
+        price: 199,
+        images: ['/images/krishna-companion-box.png'],
+        creator: {
+            id: 'openai-hardware',
+            name: 'OpenAI Hardware',
+            username: 'openai_hardware',
+            badge: 'Maker',
+            credibility_score: 95,
+            products: [],
+            contributions: [],
+            posts: []
+        },
+        status: 'Coming Soon',
+        upvotes: 112,
+        privacy_verified: true,
+        launch_date: '2026-07-01',
+        slug: 'krishna-companion-box',
+        skill_level: 'Beginner'
+    },
+    {
+        id: 'spiritual-002',
+        name: 'Vedanta Wisdom Box',
+        category: 'Assistant Boxes',
+        subCategory: 'Spiritual Companions',
+        description: 'Vedanta Wisdom Box is your personal guide to Advaita Vedanta philosophy. Explore profound questions of consciousness, self, and reality through conversations with an AI trained on the Upanishads and teachings of great Vedantic masters. Perfect for deep meditation and philosophical inquiry.',
+        price: 229,
+        images: ['/images/vedanta-wisdom-box.png'],
+        creator: {
+            id: 'openai-hardware',
+            name: 'OpenAI Hardware',
+            username: 'openai_hardware',
+            badge: 'Maker',
+            credibility_score: 95,
+            products: [],
+            contributions: [],
+            posts: []
+        },
+        status: 'Coming Soon',
+        upvotes: 89,
+        privacy_verified: true,
+        launch_date: '2026-07-01',
+        slug: 'vedanta-wisdom-box',
+        skill_level: 'Advanced'
+    },
+    {
         id: 'real-1',
         name: 'Reachy Mini',
         category: 'Programmable Robotics',
@@ -426,38 +476,8 @@ const initialProducts: Product[] = [
         slug: 'weatherbox',
         skill_level: 'Beginner'
     },
-    {
-        id: 'real-9',
-        name: 'AI-Powered Box',
-        category: 'Assistant Boxes',
-        subCategory: 'Kids Learning',
-        description: 'A versatile AI assistant hardware designed for home companionship and learning aid. Features local voice processing and customizable personas.',
-        price: 149,
-        images: ['📦'],
-        creator: { id: 'u13', name: 'OpenAI Hardware', username: 'openai_hardware', badge: 'Maker', credibility_score: 95, products: [], contributions: [], posts: [] },
-        status: 'Available',
-        upvotes: 112,
-        privacy_verified: true,
-        launch_date: '2025-12-01',
-        slug: 'ai-powered-box',
-        skill_level: 'Beginner'
-    },
-    {
-        id: 'real-10',
-        name: 'AI-Powered Bhagavad Gita Box',
-        category: 'Assistant Boxes',
-        subCategory: 'Voice Assistants',
-        description: 'A spiritual and cultural AI assistant providing guidance and meditation companionship based on the teachings of the Bhagavad Gita.',
-        price: 159,
-        images: ['🕉️'],
-        creator: { id: 'u14', name: 'DharmaTech', username: 'dharma_tech', badge: 'Maker', credibility_score: 92, products: [], contributions: [], posts: [] },
-        status: 'Available',
-        upvotes: 98,
-        privacy_verified: true,
-        launch_date: '2025-11-15',
-        slug: 'bhagavad-gita-box',
-        skill_level: 'Beginner'
-    }
+
+
 ];
 
 export const useProductStore = create<ProductStore>((set, get) => ({

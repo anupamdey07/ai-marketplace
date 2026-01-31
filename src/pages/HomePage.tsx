@@ -5,10 +5,19 @@ import Badge from '@/components/common/Badge';
 import TrustIndicator from '@/components/common/TrustIndicator';
 import { useProductStore } from '@/store/useProductStore';
 import HeroCircle from '@/components/common/HeroCircle';
+import { useState } from 'react';
 
 export default function HomePage() {
     const navigate = useNavigate();
     const { products, upvoteProduct } = useProductStore();
+    const [upvotedId, setUpvotedId] = useState<string | null>(null);
+
+    const handleUpvote = (id: string) => {
+        setUpvotedId(id);
+        upvoteProduct(id);
+        setTimeout(() => setUpvotedId(null), 600);
+    };
+
     const leaderboardProducts = products.slice(0, 12);
     const reachyMini = products.find(p => p.slug === 'reachy-mini');
 
@@ -96,7 +105,7 @@ export default function HomePage() {
                 <div className="container-custom">
                     <div className="text-center mb-16">
                         <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4 text-primary">
-                            Featured: Exclusive Beginner Pick(s) for January 2026
+                            Featured: Exclusive Pick(s) January 2026
                         </h2>
                         <p className="text-charcoal/70 text-lg max-w-2xl mx-auto">
                             Our most-vetted picks for first-time makers. No degree required.
@@ -111,8 +120,16 @@ export default function HomePage() {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <div className="aspect-square bg-white rounded-3xl shadow-soft flex items-center justify-center border border-background-light overflow-hidden group">
-                                    <div className="text-[200px] group-hover:scale-110 transition-transform duration-500">🤖</div>
+                                <div className="aspect-square bg-secondary/30 rounded-3xl shadow-soft flex items-center justify-center border border-background-light overflow-hidden group relative">
+                                    {reachyMini?.images[0]?.startsWith('http') ? (
+                                        <img
+                                            src={reachyMini.images[0]}
+                                            alt={reachyMini.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="text-[200px] group-hover:scale-110 transition-transform duration-500">🤖</div>
+                                    )}
                                 </div>
                             </motion.div>
 
@@ -123,8 +140,12 @@ export default function HomePage() {
                                 transition={{ duration: 0.6 }}
                             >
                                 <div className="flex gap-2 mb-4">
-                                    <Badge type="featured" label="Featured" />
-                                    <span className="px-3 py-1 bg-primary text-secondary rounded-lg text-xs font-bold">{reachyMini?.skill_level || 'Beginner'}</span>
+                                    <span className="px-3 py-1 bg-accent/10 border border-accent/20 rounded-full text-accent text-xs font-bold uppercase tracking-widest">
+                                        Featured
+                                    </span>
+                                    <span className="px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-full text-xs font-bold uppercase tracking-widest">
+                                        {reachyMini?.skill_level || 'Beginner'}
+                                    </span>
                                 </div>
 
                                 <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4 text-primary leading-tight">
@@ -152,13 +173,13 @@ export default function HomePage() {
                                         onClick={() => navigate(`/products/${reachyMini?.slug || 'reachy-mini'}`)}
                                         className="btn-accent px-8 py-3 text-white"
                                     >
-                                        Buy {reachyMini?.name || 'Reachy Mini'}
+                                        Get {reachyMini?.name || 'Reachy Mini'}
                                     </button>
                                     <button
                                         onClick={() => navigate(`/products/${reachyMini?.slug || 'reachy-mini'}`)}
                                         className="btn-outline px-8 py-3"
                                     >
-                                        Start Guide
+                                        Go to Project
                                     </button>
                                 </div>
                             </motion.div>
@@ -172,7 +193,7 @@ export default function HomePage() {
                 <div className="container-custom">
                     <div className="text-center mb-12">
                         <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4 text-primary">
-                            Trending Products
+                            Trending Products Leaderboard
                         </h2>
                         <p className="text-charcoal/70 text-lg">
                             The community's favorite physical builds right now.
@@ -191,19 +212,24 @@ export default function HomePage() {
                                 >
                                     <div className="flex flex-col items-center gap-1 pt-1 min-w-[2.5rem]">
                                         <span className="text-sm font-bold text-charcoal/30">{index + 1}.</span>
-                                        <button
-                                            onClick={() => upvoteProduct(product.id)}
+                                        <motion.button
+                                            onClick={() => handleUpvote(product.id)}
+                                            whileTap={{ scale: 0.8 }}
+                                            animate={upvotedId === product.id ? {
+                                                scale: [1, 1.4, 1],
+                                                transition: { duration: 0.3 }
+                                            } : {}}
                                             className="p-1.5 hover:bg-secondary rounded-lg transition-colors group/upvote"
                                             aria-label="Upvote"
                                         >
                                             <svg
-                                                className="w-4 h-4 text-charcoal/40 group-hover/upvote:text-accent group-hover/upvote:scale-125 transition-all"
+                                                className={`w-4 h-4 transition-all ${upvotedId === product.id ? 'text-accent scale-125' : 'text-charcoal/40 group-hover/upvote:text-accent group-hover/upvote:scale-125'}`}
                                                 fill="currentColor"
                                                 viewBox="0 0 24 24"
                                             >
                                                 <path d="M12 4l-8 8h16l-8-8z" />
                                             </svg>
-                                        </button>
+                                        </motion.button>
                                     </div>
 
                                     <div className="flex-1">
@@ -238,11 +264,11 @@ export default function HomePage() {
                                             )}
                                         </div>
                                         {product.status === 'Coming Soon' ? (
-                                            <span className="status-pill bg-yellow-400/10 border-yellow-400/20 text-yellow-600">
+                                            <span className="status-pill bg-yellow-400/10 border-yellow-400/20 text-yellow-600 text-[9px] px-2 py-0.5 whitespace-nowrap">
                                                 Coming Soon
                                             </span>
                                         ) : (
-                                            <span className="status-pill bg-emerald-500/10 border-emerald-500/20 text-emerald-600">
+                                            <span className="status-pill bg-emerald-500/10 border-emerald-500/20 text-emerald-600 text-[9px] px-2 py-0.5 whitespace-nowrap">
                                                 Available
                                             </span>
                                         )}
@@ -265,7 +291,7 @@ export default function HomePage() {
 
 
             {/* Why We Built This */}
-            <section className="py-24 bg-primary text-secondary overflow-hidden relative">
+            <section className="py-12 bg-primary text-secondary overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-accent opacity-5 rounded-full blur-3xl -mr-48 -mt-48" />
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary opacity-5 rounded-full blur-3xl -ml-32 -mb-32" />
 
@@ -285,7 +311,7 @@ export default function HomePage() {
                             </div>
                             <div className="bg-white/5 p-6 rounded-2xl border border-white/10 flex-1">
                                 <span className="text-accent font-bold text-2xl block mb-1">100%</span>
-                                <span className="text-secondary/60 text-sm uppercase tracking-widest font-bold">Guided Learning</span>
+                                <span className="text-secondary/60 text-sm uppercase tracking-widest font-bold">Discover & Learn</span>
                             </div>
                         </div>
                     </div>

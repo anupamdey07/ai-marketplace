@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '@/store/useProductStore';
 import ProductCard from '@/components/common/ProductCard';
 import Badge from '@/components/common/Badge';
+import { UserBadge } from '@/types';
 
 export default function ProfilePage() {
     const { userId } = useParams(); // Should match route param
@@ -79,16 +80,15 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Governance Tier Badge */}
-                        <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border-2 flex items-center gap-2 ${(creator.governance_tokens || 0) >= 1000 ? 'bg-indigo-50 border-indigo-200 text-indigo-600' :
-                            (creator.governance_tokens || 0) >= 500 ? 'bg-amber-50 border-amber-200 text-amber-600' :
-                                (creator.governance_tokens || 0) >= 100 ? 'bg-emerald-50 border-emerald-200 text-emerald-600' :
-                                    'bg-slate-50 border-slate-200 text-slate-600'
-                            }`}>
-                            <span className="w-2 h-2 rounded-full animate-pulse bg-current"></span>
-                            {(creator.governance_tokens || 0) >= 1000 ? 'Guardian' :
+                        <Badge
+                            type={((creator.governance_tokens || 0) >= 1000 ? 'Maker' :
+                                (creator.governance_tokens || 0) >= 500 ? 'Contributor' :
+                                    (creator.governance_tokens || 0) >= 100 ? 'Member' : 'Observer') as UserBadge}
+                            label={(creator.governance_tokens || 0) >= 1000 ? 'Guardian' :
                                 (creator.governance_tokens || 0) >= 500 ? 'Curator' :
-                                    (creator.governance_tokens || 0) >= 100 ? 'Contributor' : 'Observer'} Tier
-                        </div>
+                                    (creator.governance_tokens || 0) >= 100 ? 'Contributor' : 'Observer'}
+                            className="text-[10px]"
+                        />
                     </h1>
 
                     <a

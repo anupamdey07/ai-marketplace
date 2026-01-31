@@ -16,8 +16,9 @@ const CATEGORIES = [
 ];
 
 const SUBCATEGORIES: Record<string, string[]> = {
-    'Prompt-to-Product': ['All', 'Physical prompt boxes', 'Dropship'],
-    '3D Printing Innovation': ['All', 'Consumer 3D Printers', '3D Printed Products']
+    'Prompt-to-Product': ['All', 'Physical prompt boxes', 'Custom 3D Printed Dropship'],
+    '3D Printing Innovation': ['All', 'Consumer 3D Printers', '3D Printed Products'],
+    'Assistant Boxes': ['All', 'Spiritual Companions']
 };
 
 export default function ExplorePage() {
@@ -87,15 +88,21 @@ export default function ExplorePage() {
             result = result.filter(p => p.subCategory === activeSubCategory);
         }
 
-        // Sort/Filter logic
-        if (activeFilter === 'Trending') {
-            result.sort((a, b) => b.upvotes - a.upvotes);
-        } else if (activeFilter === 'New') {
-            // Sort by launch date (descending)
-            result.sort((a, b) => new Date(b.launch_date).getTime() - new Date(a.launch_date).getTime());
-        } else if (activeFilter === 'Most Voted') {
-            result.sort((a, b) => b.upvotes - a.upvotes);
-        }
+        // Primary Sort: Available first, then Coming Soon
+        result.sort((a, b) => {
+            if (a.status === 'Available' && b.status !== 'Available') return -1;
+            if (a.status !== 'Available' && b.status === 'Available') return 1;
+
+            // Secondary Sort based on activeFilter
+            if (activeFilter === 'Trending') {
+                return b.upvotes - a.upvotes;
+            } else if (activeFilter === 'New') {
+                return new Date(b.launch_date).getTime() - new Date(a.launch_date).getTime();
+            } else if (activeFilter === 'Most Voted') {
+                return b.upvotes - a.upvotes;
+            }
+            return 0;
+        });
 
         return result;
     }, [products, searchQuery, activeFilter, activeCategory, activeSubCategory]);
@@ -145,10 +152,10 @@ export default function ExplorePage() {
                                     <button
                                         key={filter}
                                         onClick={() => setActiveFilter(filter)}
-                                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeFilter === filter
+                                        className={`px - 4 py - 2 rounded - xl text - sm font - bold transition - all ${activeFilter === filter
                                             ? 'bg-primary text-white shadow-lg'
                                             : 'text-charcoal/40 hover:text-primary hover:bg-background-light'
-                                            }`}
+                                            } `}
                                     >
                                         {filter}
                                     </button>
@@ -163,10 +170,10 @@ export default function ExplorePage() {
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${activeCategory === cat
+                                className={`px - 4 py - 2 rounded - full text - xs font - bold border transition - all ${activeCategory === cat
                                     ? 'bg-secondary border-primary/20 text-primary shadow-sm'
                                     : 'bg-white border-background-light text-charcoal/40 hover:border-primary/40'
-                                    }`}
+                                    } `}
                             >
                                 {cat}
                             </button>
@@ -186,10 +193,10 @@ export default function ExplorePage() {
                                     <button
                                         key={sub}
                                         onClick={() => setActiveSubCategory(sub)}
-                                        className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all ${activeSubCategory === sub
+                                        className={`px - 3 py - 1.5 rounded - full text - [10px] font - bold uppercase tracking - wider border transition - all ${activeSubCategory === sub
                                             ? 'bg-primary text-white border-primary shadow-sm'
                                             : 'bg-white border-background-light text-charcoal/30 hover:text-charcoal hover:border-charcoal/20'
-                                            }`}
+                                            } `}
                                     >
                                         {sub}
                                     </button>

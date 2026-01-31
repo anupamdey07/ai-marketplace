@@ -32,10 +32,11 @@ export default function LeaderboardPage() {
         'All Categories',
         'Programmable Robotics',
         'Physical prompt boxes',
-        'Dropship',
+        'Custom 3D Printed Dropship',
         'Consumer 3D Printers',
         '3D Printed Products',
         'Assistant Boxes',
+        'Spiritual Companions',
         'Kids Learning Tools',
         'Voice Assistants'
     ];
@@ -249,14 +250,14 @@ export default function LeaderboardPage() {
 
                                     <div className="hidden md:flex justify-center">
                                         {product.status === 'Coming Soon' ? (
-                                            <span className="flex items-center gap-1.5 px-3 py-1 bg-yellow-400/10 rounded-full border border-yellow-400/20">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
-                                                <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-widest">Coming Soon</span>
+                                            <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-400/10 rounded-full border border-yellow-400/20 whitespace-nowrap">
+                                                <span className="w-1 h-1 rounded-full bg-yellow-400"></span>
+                                                <span className="text-[9px] font-bold text-yellow-600 uppercase tracking-widest">Coming Soon</span>
                                             </span>
                                         ) : (
-                                            <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Available</span>
+                                            <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 rounded-full border border-emerald-500/20 whitespace-nowrap">
+                                                <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Available</span>
                                             </span>
                                         )}
                                     </div>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { CategoryInfo } from '@/types';
 
 const categories: CategoryInfo[] = [
@@ -50,28 +50,60 @@ const categories: CategoryInfo[] = [
 export default function CategoryScroll() {
     const navigate = useNavigate();
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [isPaused, setIsPaused] = useState(false);
+
+    const scrollPosRef = useRef(0);
+
+    // Auto-scroll animation
+    useEffect(() => {
+        const scrollContainer = scrollRef.current;
+        if (!scrollContainer) return;
+
+        let animationFrameId: number;
+
+        // Initialize scroll position from DOM
+        scrollPosRef.current = scrollContainer.scrollLeft;
+
+        const animateScroll = () => {
+            if (!isPaused && scrollContainer) {
+                // Determine the width of one full set of items
+                // We have 4 identical sets. The seamless point is exactly at 1/4 of total scrollWidth
+                const totalWidth = scrollContainer.scrollWidth;
+                const oneSetWidth = totalWidth / 4;
+
+                // Speed of the auto-scroll
+                scrollPosRef.current += 0.4;
+
+                // Infinite loop logic:
+                // If we've scrolled past the first set, seamless reset
+                // Instead of setting to 0, regarding precision, we subtract oneSetWidth
+                if (scrollPosRef.current >= oneSetWidth) {
+                    scrollPosRef.current -= oneSetWidth;
+                }
+
+                scrollContainer.scrollLeft = scrollPosRef.current;
+            } else if (scrollContainer) {
+                // If paused or stopped, sync ref back to actual DOM position 
+                // in case user manually scrolled
+                scrollPosRef.current = scrollContainer.scrollLeft;
+            }
+            animationFrameId = requestAnimationFrame(animateScroll);
+        };
+
+        animationFrameId = requestAnimationFrame(animateScroll);
+
+        return () => cancelAnimationFrame(animationFrameId);
+    }, [isPaused]);
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+            const { scrollLeft } = scrollRef.current;
             const scrollAmount = 300;
-            const maxScroll = scrollWidth - clientWidth;
 
-            let targetScroll;
-
-            if (direction === 'left') {
-                targetScroll = scrollLeft - scrollAmount;
-                // If we are at the very beginning, wrap around to the end
-                if (scrollLeft <= 5) {
-                    targetScroll = maxScroll;
-                }
-            } else {
-                targetScroll = scrollLeft + scrollAmount;
-                // If we are at the very end, wrap around to the beginning
-                if (scrollLeft >= maxScroll - 5) {
-                    targetScroll = 0;
-                }
-            }
+            // For manual scroll
+            const targetScroll = direction === 'left'
+                ? scrollLeft - scrollAmount
+                : scrollLeft + scrollAmount;
 
             scrollRef.current.scrollTo({
                 left: targetScroll,
@@ -79,6 +111,9 @@ export default function CategoryScroll() {
             });
         }
     };
+
+    // Quadruple categories for seamless infinite scroll (Buffer-Real-Buffer-Buffer)
+    const displayCategories = [...categories, ...categories, ...categories, ...categories];
 
     return (
         <section className="py-24 bg-background-light/30 relative">
@@ -96,7 +131,11 @@ export default function CategoryScroll() {
                 </div>
 
                 {/* Main Scroll Container with Overlay Arrows */}
-                <div className="relative group/scroll">
+                <div
+                    className="relative group/scroll"
+                    onMouseEnter={() => setIsPaused(true)}
+                    onMouseLeave={() => setIsPaused(false)}
+                >
                     {/* Left Arrow - Floating */}
                     <button
                         onClick={() => scroll('left')}
@@ -110,11 +149,11 @@ export default function CategoryScroll() {
 
                     <div
                         ref={scrollRef}
-                        className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory custom-scrollbar -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
+                        className="flex overflow-x-auto gap-6 pb-8 custom-scrollbar -mx-4 px-4 md:mx-0 md:px-0"
                     >
-                        {categories.map((category) => (
+                        {displayCategories.map((category, index) => (
                             <button
-                                key={category.id}
+                                key={`${category.id}-${index}`}
                                 onClick={() => navigate(`/explore/${encodeURIComponent(category.name)}`)}
                                 className="snap-start flex-shrink-0 w-[300px] group"
                             >
