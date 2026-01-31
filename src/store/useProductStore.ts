@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Product } from '@/types';
+import { Product, User } from '@/types';
 import { fetchAirtableProducts, upvoteAirtableProduct } from '@/services/airtable';
 
 interface ProductStore {
@@ -10,7 +10,7 @@ interface ProductStore {
     upvoteProduct: (id: string) => Promise<void>;
 }
 
-// Initial mock data with 12 products for the leaderboard
+// Initial mock data with updated categories and researched products
 const initialProducts: Product[] = [
     {
         id: 'real-1',
@@ -34,7 +34,7 @@ const initialProducts: Product[] = [
             posts: [
                 {
                     id: 'post-1',
-                    author: { id: 'pollen', name: 'Pollen Robotics', username: 'pollen_robotics', badge: 'Contributor', credibility_score: 98, avatar: 'https://github.com/pollen-robotics.png', products: [], contributions: [], posts: [] } as any,
+                    author: { id: 'pollen', name: 'Pollen Robotics', username: 'pollen_robotics', badge: 'Contributor', credibility_score: 98, avatar: 'https://github.com/pollen-robotics.png', products: [], contributions: [], posts: [] } as unknown as User,
                     content: "Reachy Mini is now shipping! Can't wait to see what you build. 🦾 #opensource #robotics",
                     images: ['https://www.pollen-robotics.com/wp-content/uploads/2025/06/Reachy_mini_website_stuff00558988-ezgif.com-video-to-gif-converter.gif'],
                     hashtags: ['opensource', 'robotics'],
@@ -59,34 +59,7 @@ const initialProducts: Product[] = [
                 certified: true,
                 downloads: 1205,
                 creator: { id: 'pollen', name: 'Pollen Robotics', username: 'pollen_robotics', badge: 'Contributor', credibility_score: 98, products: [], contributions: [], posts: [] },
-                product: {} as any
-            },
-            {
-                id: 'app-2',
-                name: 'Teleoperation VR',
-                description: 'Control Reachy remotely using a VR headset for immersive telepresence.',
-                certified: true,
-                downloads: 850,
-                creator: { id: 'pollen', name: 'Pollen Robotics', username: 'pollen_robotics', badge: 'Contributor', credibility_score: 98, products: [], contributions: [], posts: [] },
-                product: {} as any
-            },
-            {
-                id: 'app-3',
-                name: 'Tic-Tac-Toe Player',
-                description: 'A community-built AI that plays Tic-Tac-Toe with you using vision and arm movements.',
-                certified: false,
-                downloads: 342,
-                creator: { id: 'dev1', name: 'OpenCV Fan', username: 'opencv_fan', badge: 'Maker', credibility_score: 45, products: [], contributions: [], posts: [] },
-                product: {} as any
-            },
-            {
-                id: 'app-4',
-                name: 'Sign Language Tutor',
-                description: 'Teaches basic sign language alphabet using Reachy\'s hands.',
-                certified: false,
-                downloads: 215,
-                creator: { id: 'dev2', name: 'EduBot', username: 'edubot_official', badge: 'Maker', credibility_score: 60, products: [], contributions: [], posts: [] },
-                product: {} as any
+                product: {} as unknown as Product
             }
         ]
     },
@@ -94,6 +67,7 @@ const initialProducts: Product[] = [
         id: 'real-2',
         name: 'Sticker Box',
         category: 'Prompt-to-Product',
+        subCategory: 'Physical Boxes',
         description: 'Voice-activated AI sticker printer for kids. Transform imaginative ideas into tangible stickers instantly using 203 DPI ink-free thermal technology. Features built-in content filters and high-privacy local processing.',
         price: 95,
         images: ['https://stickerbox.com/cdn/shop/files/stickerbox-landing-gif.gif?v=1762813714&width=1920'],
@@ -110,7 +84,7 @@ const initialProducts: Product[] = [
             posts: [
                 {
                     id: 'post-2',
-                    author: { id: 'hapiko', name: 'Hapiko', username: 'hapiko_labs', badge: 'Contributor', credibility_score: 94, avatar: 'https://ui-avatars.com/api/?name=Hapiko&background=ff5264&color=fff', products: [], contributions: [], posts: [] } as any,
+                    author: { id: 'hapiko', name: 'Hapiko', username: 'hapiko_labs', badge: 'Contributor', credibility_score: 94, avatar: 'https://ui-avatars.com/api/?name=Hapiko&background=ff5264&color=fff', products: [], contributions: [], posts: [] } as unknown as User,
                     content: "Our space collection is a hit with the early testers! 🚀 ✨ #stickerbox #ai",
                     images: ['https://stickerbox.com/cdn/shop/files/stickerbox-landing-gif.gif?v=1762813714&width=1920'],
                     hashtags: ['stickerbox', 'ai'],
@@ -127,6 +101,130 @@ const initialProducts: Product[] = [
         slug: 'sticker-box',
         skill_level: 'Beginner',
         external_link: 'https://stickerbox.com/'
+    },
+    {
+        id: 'real-4',
+        name: 'Bambu Lab A1 Mini',
+        category: '3D Printed Innovations',
+        subCategory: 'Consumer Printers',
+        description: 'The ultimate beginner-friendly 3D printer with AI active flow control and automatic bed leveling. Features spaghetti detection and remote monitoring via camera. Perfect for high-speed, reliable printing.',
+        price: 249,
+        images: ['https://cdn1.bambulab.com/common/a1-mini/a1-mini-primary.png'],
+        creator: {
+            id: 'bambulab',
+            name: 'Bambu Lab',
+            username: 'bambulab_official',
+            bio: 'State of the art 3D printers for creators.',
+            badge: 'Contributor',
+            credibility_score: 97,
+            products: [], contributions: [], posts: []
+        },
+        status: 'Available',
+        upvotes: 212,
+        privacy_verified: true,
+        launch_date: '2024-10-01',
+        slug: 'bambu-a1-mini',
+        skill_level: 'Beginner',
+        external_link: 'https://bambulab.com/en-eu/a1-mini'
+    },
+    {
+        id: 'real-5',
+        name: 'Creality K1C',
+        category: '3D Printed Innovations',
+        subCategory: 'Consumer Printers',
+        description: 'Enclosed AI-powered 3D printer with an integrated AI camera for real-time monitoring and failure detection. Optimized for carbon fiber and other technical filaments. 600mm/s top speed.',
+        price: 499,
+        images: ['https://www.creality.com/cdn/shop/files/K1C-1.png'],
+        creator: {
+            id: 'creality',
+            name: 'Creality',
+            username: 'creality_3d',
+            bio: 'Leading the global 3D printing industry.',
+            badge: 'Contributor',
+            credibility_score: 92,
+            products: [], contributions: [], posts: []
+        },
+        status: 'Available',
+        upvotes: 195,
+        privacy_verified: true,
+        launch_date: '2024-05-15',
+        slug: 'creality-k1c',
+        skill_level: 'Intermediate',
+        external_link: 'https://www.creality.com/products/creality-k1c-3d-printer'
+    },
+    {
+        id: 'real-6',
+        name: 'Vrk.ai Prompt-to-Toy',
+        category: 'Prompt-to-Product',
+        subCategory: 'Dropship',
+        description: 'Describe any character or toy, and get it delivered as a high-quality 3D printed physical object. Powered by generative AI for 3D modeling and custom shipping. From imagination to your doorstep.',
+        price: 45,
+        images: ['https://vrk.ai/static/media/hero-image.b8f8d9c1.png'],
+        creator: {
+            id: 'vrkai',
+            name: 'Vrk.ai',
+            username: 'vrk_ai',
+            bio: 'Prompt to Physical Reality.',
+            badge: 'Maker',
+            credibility_score: 90,
+            products: [], contributions: [], posts: []
+        },
+        status: 'Available',
+        upvotes: 167,
+        privacy_verified: true,
+        launch_date: '2024-12-01',
+        slug: 'vrk-prompt-to-toy',
+        skill_level: 'Beginner',
+        external_link: 'https://vrk.ai/'
+    },
+    {
+        id: 'real-7',
+        name: 'AI-Designed Lattice Bike Saddle',
+        category: '3D Printed Innovations',
+        subCategory: 'AI-Created Products',
+        description: 'Highly ergonomic bike saddle featuring AI-optimized internal lattice structures. Impossible to manufacture without specialized 3D printing and generative design. Provides zonal pressure relief and ultimate comfort.',
+        price: 180,
+        images: ['https://i.all3dp.com/cdn-cgi/image/fit=cover,w=1284,h=722,gravity=0.5x0.5,format=auto/wp-content/uploads/2021/05/19172037/the-fizik-antares-versus-evo-00-adaptive-saddle-is-3d-fizik-210519.jpg'],
+        creator: {
+            id: 'fizik',
+            name: 'fizik',
+            username: 'fizik_official',
+            bio: 'Premium cycling gear powered by innovation.',
+            badge: 'Contributor',
+            credibility_score: 95,
+            products: [], contributions: [], posts: []
+        },
+        status: 'Available',
+        upvotes: 142,
+        privacy_verified: true,
+        launch_date: '2024-03-20',
+        slug: 'ai-lattice-saddle',
+        skill_level: 'Advanced'
+    },
+    {
+        id: 'real-8',
+        name: 'Cloud Factory AI Jewelry',
+        category: 'Prompt-to-Product',
+        subCategory: 'Dropship',
+        description: 'Generate unique jewelry designs using AI and get them printed in solid silver or 14k gold. A complete end-to-end service from prompt to physical luxury item. Zero inventory, 100% unique.',
+        price: 120,
+        images: ['https://cloudfactory.art/wp-content/uploads/2023/10/AI-Jewelry-Hero.jpg'],
+        creator: {
+            id: 'cloudfactory',
+            name: 'Cloud Factory',
+            username: 'cloud_factory',
+            bio: '3D printed jewelry as a service.',
+            badge: 'Contributor',
+            credibility_score: 93,
+            products: [], contributions: [], posts: []
+        },
+        status: 'Available',
+        upvotes: 128,
+        privacy_verified: true,
+        launch_date: '2024-01-10',
+        slug: 'cloud-factory-jewelry',
+        skill_level: 'Beginner',
+        external_link: 'https://cloudfactory.art/'
     },
     {
         id: 'real-3',
@@ -148,7 +246,7 @@ const initialProducts: Product[] = [
             posts: [
                 {
                     id: 'post-3',
-                    author: { id: 'petoi', name: 'Petoi', username: 'petoi_robotics', badge: 'Contributor', credibility_score: 96, avatar: 'https://ui-avatars.com/api/?name=Petoi&background=FFB5C2&color=fff', products: [], contributions: [], posts: [] } as any,
+                    author: { id: 'petoi', name: 'Petoi', username: 'petoi_robotics', badge: 'Contributor', credibility_score: 96, avatar: 'https://ui-avatars.com/api/?name=Petoi&background=FFB5C2&color=fff', products: [], contributions: [], posts: [] } as unknown as User,
                     content: "Nybble 2.0 is purring perfectly. Open source mechanics make it fully hackable. 😺⚙️ #robotics #cat",
                     images: ['https://www.petoi.com/cdn/shop/files/nybblesayhi_800x.jpg?v=1712770915'],
                     hashtags: ['robotics', 'cat'],
@@ -185,6 +283,7 @@ const initialProducts: Product[] = [
         id: '2',
         name: 'Planted AI',
         category: '3D Printed Innovations',
+        subCategory: 'AI-Created Products',
         description: 'Smart soil monitoring and hydration system.',
         price: 45,
         images: ['🌿'],
@@ -275,6 +374,7 @@ const initialProducts: Product[] = [
         id: '8',
         name: 'EcoMonitor 1',
         category: '3D Printed Innovations',
+        subCategory: 'AI-Created Products',
         description: 'Solar-powered air quality sensor node.',
         price: 55,
         images: ['🌬️'],
@@ -305,6 +405,7 @@ const initialProducts: Product[] = [
         id: '10',
         name: 'PetFeed AI',
         category: '3D Printed Innovations',
+        subCategory: 'AI-Created Products',
         description: 'Facial recognition based automatic pet feeder.',
         price: 180,
         images: ['🐱'],
@@ -348,8 +449,6 @@ const initialProducts: Product[] = [
     }
 ];
 
-
-
 export const useProductStore = create<ProductStore>((set, get) => ({
     products: initialProducts,
     isLoading: false,
@@ -379,13 +478,12 @@ export const useProductStore = create<ProductStore>((set, get) => ({
                 .sort((a, b) => b.upvotes - a.upvotes),
         }));
 
-        // Persist to Airtable if it's an Airtable record (ID usually doesn't start with 'real-' or '1-12')
+        // Persist to Airtable if it's an Airtable record
         if (id.startsWith('rec')) {
             try {
                 await upvoteAirtableProduct(id, product.upvotes);
             } catch (error) {
                 console.error('Failed to persist upvote to Airtable:', error);
-                // Rollback if necessary, but usually optimistic is fine for upvotes
             }
         }
     },

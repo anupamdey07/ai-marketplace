@@ -42,6 +42,11 @@ export default function ProductPage() {
                                 <span className="px-3 py-1 bg-accent text-white rounded-lg text-xs font-bold uppercase tracking-widest">
                                     {product.category}
                                 </span>
+                                {product.subCategory && (
+                                    <span className="px-3 py-1 bg-white/30 text-white rounded-lg text-xs font-bold uppercase tracking-widest backdrop-blur-sm border border-white/20">
+                                        {product.subCategory}
+                                    </span>
+                                )}
                                 <span className="px-3 py-1 bg-white/20 text-white rounded-lg text-xs font-bold uppercase tracking-widest">
                                     {product.skill_level || 'Beginner'}
                                 </span>

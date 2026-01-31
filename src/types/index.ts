@@ -10,6 +10,12 @@ export type ProductCategory =
     | 'Kids Learning Tools'
     | 'Voice Assistants';
 
+// Subcategories for specific categories
+export type PromptToProductSubcategory = 'Physical Boxes' | 'Dropship';
+export type ThreeDPrintedSubcategory = 'Consumer Printers' | 'AI-Created Products';
+
+export type ProductSubcategory = PromptToProductSubcategory | ThreeDPrintedSubcategory;
+
 export type UserBadge = 'Member' | 'Contributor' | 'Maker';
 export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced';
 
@@ -17,6 +23,7 @@ export interface Product {
     id: string;
     name: string;
     category: ProductCategory;
+    subCategory?: ProductSubcategory;
     description: string;
     price: number;
     images: string[];

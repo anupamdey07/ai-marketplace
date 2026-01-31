@@ -54,7 +54,7 @@ export default function HomePage() {
                             >
                                 <span className="font-black text-primary">smart consumer hardware products</span>,
                                 <br />
-                                by the <span className="text-accent italic font-black underline decoration-primary decoration-4 underline-offset-8">next-generation</span>
+                                by the <span className="text-accent font-black">next-generation</span>
                                 <br />
                                 of creators, <span className="text-primary/70">ai-powered coders</span>, <span className="font-black text-primary">innovators.</span>
                             </motion.h1>
@@ -65,7 +65,7 @@ export default function HomePage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
                             >
-                                We curate consumer-ready smart hardware, refined products with real traction.
+                                We <span className="font-bold">handpick & curate</span> consumer-ready smart hardware, refined products with real traction.
                                 Start your path from curious beginner to creator.
                             </motion.p>
 

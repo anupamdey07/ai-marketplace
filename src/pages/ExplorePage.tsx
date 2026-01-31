@@ -15,6 +15,11 @@ const CATEGORIES = [
     'Voice Assistants'
 ];
 
+const SUBCATEGORIES: Record<string, string[]> = {
+    'Prompt-to-Product': ['All', 'Physical Boxes', 'Dropship'],
+    '3D Printed Innovations': ['All', 'Consumer Printers', 'AI-Created Products']
+};
+
 export default function ExplorePage() {
     const { products } = useProductStore();
     const { search } = useLocation();
@@ -26,12 +31,7 @@ export default function ExplorePage() {
 
     const [searchQuery, setSearchQuery] = useState(initialSearch);
     const [activeFilter, setActiveFilter] = useState('All');
-
-    // Map URL category slug to readable category name if needed, or just use direct match if slugs match
-    // Simple direct match for now. If category is undefined, use 'All'.
-    // The Route is /explore/:category, but our category names have spaces. 
-    // Usually URLs use dashes. We might need a helper to map "programmable-robotics" -> "Programmable Robotics".
-    // For simplicity let's assume the passed category is URL encoded or we do a simple find.
+    const [activeSubCategory, setActiveSubCategory] = useState('All');
 
     const initialCategory = useMemo(() => {
         if (!category) return 'All';
@@ -59,6 +59,11 @@ export default function ExplorePage() {
         setActiveCategory(match || 'All');
     }, [category]);
 
+    // Reset subcategory when category changes
+    useEffect(() => {
+        setActiveSubCategory('All');
+    }, [activeCategory]);
+
     const filteredProducts = useMemo(() => {
         let result = [...products];
 
@@ -77,18 +82,23 @@ export default function ExplorePage() {
             result = result.filter(p => p.category === activeCategory);
         }
 
+        // Subcategory filter
+        if (activeSubCategory !== 'All') {
+            result = result.filter(p => p.subCategory === activeSubCategory);
+        }
+
         // Sort/Filter logic
         if (activeFilter === 'Trending') {
             result.sort((a, b) => b.upvotes - a.upvotes);
         } else if (activeFilter === 'New') {
-            // In a real app we'd use timestamp, here we just use index
-            result.reverse();
+            // Sort by launch date (descending)
+            result.sort((a, b) => new Date(b.launch_date).getTime() - new Date(a.launch_date).getTime());
         } else if (activeFilter === 'Most Voted') {
             result.sort((a, b) => b.upvotes - a.upvotes);
         }
 
         return result;
-    }, [products, searchQuery, activeFilter, activeCategory]);
+    }, [products, searchQuery, activeFilter, activeCategory, activeSubCategory]);
 
     return (
         <div className="bg-background min-h-screen py-12">
@@ -100,7 +110,7 @@ export default function ExplorePage() {
                             🧭
                         </div>
                         <h1 className="font-heading text-4xl font-bold text-primary tracking-tight">
-                            Explore <span className="text-accent italic">Smart Gadgets</span>
+                            Explore <span className="text-accent">next-gen consumer products</span>
                             <span className="ml-4 text-lg font-mono text-charcoal/30 font-medium">{filteredProducts.length}</span>
                         </h1>
                     </div>
@@ -162,6 +172,31 @@ export default function ExplorePage() {
                             </button>
                         ))}
                     </div>
+
+                    {/* SubCategory Filter Chips (Conditional) */}
+                    <AnimatePresence>
+                        {SUBCATEGORIES[activeCategory] && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="flex flex-wrap gap-2 mt-4 pl-4 border-l-2 border-background-light"
+                            >
+                                {SUBCATEGORIES[activeCategory].map(sub => (
+                                    <button
+                                        key={sub}
+                                        onClick={() => setActiveSubCategory(sub)}
+                                        className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all ${activeSubCategory === sub
+                                            ? 'bg-primary text-white border-primary shadow-sm'
+                                            : 'bg-white border-background-light text-charcoal/30 hover:text-charcoal hover:border-charcoal/20'
+                                            }`}
+                                    >
+                                        {sub}
+                                    </button>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Product Grid */}
