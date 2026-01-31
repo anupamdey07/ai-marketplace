@@ -12,6 +12,7 @@ import ComingSoonPage from '@/pages/ComingSoonPage'
 
 import { useEffect } from 'react'
 import { useProductStore } from '@/store/useProductStore'
+import ScrollToTop from '@/components/common/ScrollToTop'
 
 function App() {
     const fetchProducts = useProductStore((state) => state.fetchProducts)
@@ -22,6 +23,7 @@ function App() {
 
     return (
         <Layout>
+            <ScrollToTop />
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/explore" element={<ExplorePage />} />
