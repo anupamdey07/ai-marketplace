@@ -190,21 +190,21 @@ export default function LeaderboardPage() {
                             >
                                 <Link
                                     to={`/products/${product.slug}`}
-                                    className="p-6 grid grid-cols-1 md:grid-cols-[80px_1fr_150px_100px] items-center gap-6 block"
+                                    className="p-4 md:p-6 grid grid-cols-[40px_1fr_70px] md:grid-cols-[80px_1fr_150px_100px] items-center gap-x-4 md:gap-x-6 gap-y-4"
                                 >
-                                    <div className="flex flex-col items-center gap-2">
-                                        <span className="text-xl font-bold text-charcoal/20">#{index + 1}</span>
+                                    <div className="flex flex-col items-center gap-1 md:gap-2">
+                                        <span className="text-sm md:text-xl font-bold text-charcoal/20">#{index + 1}</span>
                                         <button
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 upvoteProduct(product.id);
                                             }}
-                                            className="p-2 hover:bg-secondary rounded-xl transition-colors group/upvote"
+                                            className="p-1.5 md:p-2 hover:bg-secondary rounded-xl transition-colors group/upvote"
                                             aria-label="Upvote"
                                         >
                                             <svg
-                                                className="w-5 h-5 text-charcoal/40 group-hover/upvote:text-accent group-hover/upvote:scale-125 transition-all"
+                                                className="w-4 h-4 md:w-5 md:h-5 text-charcoal/40 group-hover/upvote:text-accent group-hover/upvote:scale-125 transition-all"
                                                 fill="currentColor"
                                                 viewBox="0 0 24 24"
                                             >
@@ -213,25 +213,25 @@ export default function LeaderboardPage() {
                                         </button>
                                     </div>
 
-                                    <div className="flex gap-6 items-center">
-                                        <div className="w-20 h-20 bg-background rounded-2xl flex items-center justify-center text-4xl border border-background-light shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+                                    <div className="flex gap-3 md:gap-6 items-center overflow-hidden">
+                                        <div className="w-12 h-12 md:w-20 md:h-20 bg-background rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-4xl border border-background-light shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
                                             {product.images[0]?.startsWith('http') || product.images[0]?.startsWith('/') ? (
                                                 <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
                                             ) : (
                                                 product.images[0] || '📦'
                                             )}
                                         </div>
-                                        <div>
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h3 className="font-heading font-bold text-xl text-primary group-hover:text-accent transition-colors">
+                                        <div className="min-w-0">
+                                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 mb-1">
+                                                <h3 className="font-heading font-bold text-base md:text-xl text-primary group-hover:text-accent transition-colors truncate">
                                                     {product.name}
                                                 </h3>
-                                                <span className="text-[10px] font-bold text-charcoal/40 bg-background-light px-2 py-0.5 rounded uppercase tracking-wider">
+                                                <span className="inline-block w-fit text-[8px] md:text-[10px] font-bold text-charcoal/40 bg-background-light px-1.5 md:px-2 py-0.5 rounded uppercase tracking-wider">
                                                     {product.category}
                                                 </span>
                                             </div>
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-charcoal/60">
-                                                <span>by <span className="underline decoration-secondary underline-offset-2 cursor-pointer font-medium hover:text-accent transition-colors">{product.creator.name}</span></span>
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] md:text-sm text-charcoal/60">
+                                                <span className="truncate">by <span className="underline decoration-secondary underline-offset-2 cursor-pointer font-medium hover:text-accent transition-colors">{product.creator.name}</span></span>
                                                 <span className={`font-bold ${product.skill_level === 'Beginner' ? 'text-mint' :
                                                     product.skill_level === 'Intermediate' ? 'text-accent' :
                                                         'text-primary'
@@ -242,12 +242,12 @@ export default function LeaderboardPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col items-center gap-1">
-                                        <span className="text-2xl font-bold text-primary">{product.upvotes}</span>
-                                        <span className="text-xs font-bold text-charcoal/30 uppercase tracking-widest">Points</span>
+                                    <div className="flex flex-col items-center gap-0 md:gap-1">
+                                        <span className="text-lg md:text-2xl font-bold text-primary">{product.upvotes}</span>
+                                        <span className="text-[8px] md:text-xs font-bold text-charcoal/30 uppercase tracking-widest">Points</span>
                                     </div>
 
-                                    <div className="flex justify-center">
+                                    <div className="hidden md:flex justify-center">
                                         {product.status === 'Coming Soon' ? (
                                             <span className="flex items-center gap-1.5 px-3 py-1 bg-yellow-400/10 rounded-full border border-yellow-400/20">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
@@ -261,6 +261,7 @@ export default function LeaderboardPage() {
                                         )}
                                     </div>
                                 </Link>
+
                             </motion.div>
                         ))}
                     </div>
@@ -277,7 +278,7 @@ export default function LeaderboardPage() {
                         Submit a Product
                     </button>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
