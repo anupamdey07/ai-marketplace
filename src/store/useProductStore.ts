@@ -18,7 +18,7 @@ const initialProducts: Product[] = [
         category: 'Programmable Robotics',
         description: 'An open-source desktop robot designed for AI experimentation. Features 6 Degrees of Freedom, motorized antennas for expression, and deep Hugging Face integration. Powered by Raspberry Pi 5 (Wireless) or ESP32 (Lite).',
         price: 299,
-        images: ['https://www.pollen-robotics.com/wp-content/uploads/2025/06/Reachy_mini_website_stuff00558988-ezgif.com-video-to-gif-converter.gif'],
+        images: ['https://cdn-uploads.huggingface.co/production/uploads/671faa3a541a76b548647676/uEa13KsL5wtQREVZ1ixwc.png'],
         creator: {
             id: 'pollen',
             name: 'Pollen Robotics',
@@ -183,9 +183,9 @@ const initialProducts: Product[] = [
         name: 'Cloud Factory AI Jewelry',
         category: 'Prompt-to-Product',
         subCategory: 'Dropship',
-        description: 'Generate unique jewelry designs using AI and get them printed in solid silver or 14k gold. A complete end-to-end service from prompt to physical luxury item. Zero inventory, 100% unique.',
+        description: 'Launch your personal branded jewelry merchandise with 3D-printed silver. Cloud Factory handles everything from AI-assisted design to sustainable production and drop-shipping fulfillment. Zero inventory, 100% professional jewelry quality.',
         price: 120,
-        images: ['https://cloudfactory.art/wp-content/uploads/2023/10/AI-Jewelry-Hero.jpg'],
+        images: ['https://cdn.prod.website-files.com/631f177de10b3f511d17d488/631f177de10b3f2af217d4a6_AlanWalker-3-square.jpg'],
         creator: {
             id: 'cloudfactory',
             name: 'Cloud Factory',
@@ -201,7 +201,7 @@ const initialProducts: Product[] = [
         launch_date: '2024-01-10',
         slug: 'cloud-factory-jewelry',
         skill_level: 'Beginner',
-        external_link: 'https://cloudfactory.art/'
+        external_link: 'https://www.cloudfactory.jewelry/'
     },
     {
         id: 'real-3',
