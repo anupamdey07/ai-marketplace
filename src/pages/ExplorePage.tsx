@@ -17,7 +17,7 @@ const CATEGORIES = [
 
 const SUBCATEGORIES: Record<string, string[]> = {
     'Prompt-to-Product': ['All', 'Physical Boxes', 'Dropship'],
-    '3D Printed Innovations': ['All', 'Consumer Printers', 'AI-Created Products']
+    '3D Printed Innovations': ['All', 'Consumer 3D Printers', '3D Printed Products']
 };
 
 export default function ExplorePage() {

@@ -12,7 +12,7 @@ export type ProductCategory =
 
 // Subcategories for specific categories
 export type PromptToProductSubcategory = 'Physical Boxes' | 'Dropship';
-export type ThreeDPrintedSubcategory = 'Consumer Printers' | 'AI-Created Products';
+export type ThreeDPrintedSubcategory = 'Consumer 3D Printers' | '3D Printed Products';
 
 export type ProductSubcategory = PromptToProductSubcategory | ThreeDPrintedSubcategory;
 
