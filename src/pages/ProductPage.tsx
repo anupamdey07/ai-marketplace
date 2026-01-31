@@ -239,7 +239,7 @@ export default function ProductPage() {
                                 <motion.button
                                     onClick={handleAddToCart}
                                     disabled={isSparkling}
-                                    className="btn-primary w-full py-4 text-lg mb-4 relative overflow-hidden group"
+                                    className="btn-primary w-full py-3 text-lg mb-4 relative overflow-hidden group"
                                 >
                                     <span className="flex items-center justify-center gap-2">
                                         Get Project Kit
@@ -281,7 +281,7 @@ export default function ProductPage() {
                                     <motion.button
                                         onClick={() => handleUpvote(product.id)}
                                         whileTap={{ scale: 0.95 }}
-                                        className="btn-outline w-full py-4 text-lg bg-white border-primary"
+                                        className="btn-outline w-full py-3 text-lg bg-white border-primary"
                                     >
                                         Upvote Project
                                     </motion.button>
