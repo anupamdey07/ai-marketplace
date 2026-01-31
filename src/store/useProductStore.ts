@@ -14,7 +14,7 @@ interface ProductStore {
 const initialProducts: Product[] = [
     {
         id: 'real-1',
-        name: 'Reachy mini',
+        name: 'Reachy Mini',
         category: 'Programmable Robotics',
         description: 'An open-source desktop robot designed for AI experimentation. Features 6 Degrees of Freedom, motorized antennas for expression, and deep Hugging Face integration. Powered by Raspberry Pi 5 (Wireless) or ESP32 (Lite).',
         price: 299,
@@ -50,7 +50,7 @@ const initialProducts: Product[] = [
         privacy_verified: true,
         launch_date: '2025-08-01',
         slug: 'reachy-mini',
-        skill_level: 'Advanced',
+        skill_level: 'Beginner',
         external_link: 'https://pollen-robotics-reachy-mini.hf.space/',
         apps: [
             {

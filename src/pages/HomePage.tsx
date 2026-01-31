@@ -10,6 +10,7 @@ export default function HomePage() {
     const navigate = useNavigate();
     const { products, upvoteProduct } = useProductStore();
     const leaderboardProducts = products.slice(0, 12);
+    const reachyMini = products.find(p => p.slug === 'reachy-mini');
 
     return (
         <div>
@@ -123,11 +124,11 @@ export default function HomePage() {
                             >
                                 <div className="flex gap-2 mb-4">
                                     <Badge type="featured" label="Featured" />
-                                    <span className="px-3 py-1 bg-primary text-secondary rounded-lg text-xs font-bold">Beginner</span>
+                                    <span className="px-3 py-1 bg-primary text-secondary rounded-lg text-xs font-bold">{reachyMini?.skill_level || 'Beginner'}</span>
                                 </div>
 
                                 <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4 text-primary leading-tight">
-                                    Richie Mini Companion
+                                    {reachyMini?.name || 'Reachy Mini Companion'}
                                 </h2>
 
                                 <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
@@ -148,13 +149,13 @@ export default function HomePage() {
 
                                 <div className="flex flex-wrap gap-4">
                                     <button
-                                        onClick={() => navigate('/products/reachy-mini')}
+                                        onClick={() => navigate(`/products/${reachyMini?.slug || 'reachy-mini'}`)}
                                         className="btn-accent px-8 py-3 text-white"
                                     >
-                                        Buy Richie Mini
+                                        Buy {reachyMini?.name || 'Reachy Mini'}
                                     </button>
                                     <button
-                                        onClick={() => navigate('/products/reachy-mini')}
+                                        onClick={() => navigate(`/products/${reachyMini?.slug || 'reachy-mini'}`)}
                                         className="btn-outline px-8 py-3"
                                     >
                                         Start Guide
