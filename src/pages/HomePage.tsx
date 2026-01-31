@@ -65,8 +65,8 @@ export default function HomePage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
                             >
-                                We <span className="font-bold">handpick & curate</span> consumer-ready smart hardware, refined products with real traction.
-                                Start your path from curious beginner to creator.
+                                We <span className="font-bold">handpick & curate</span> consumer-ready smart hardware products with real traction.
+                                Start your journey from a curious beginner to creator.
                             </motion.p>
 
                             <motion.div
