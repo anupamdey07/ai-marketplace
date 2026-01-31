@@ -116,7 +116,7 @@ export default function Header() {
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-heading font-black text-3xl text-primary leading-[1.2] lowercase tracking-tighter">
-                                    machbar<span className="text-[0.5em]">.io</span>
+                                    machbar<span className="text-[0.5em] tracking-wide ml-0.5 align-baseline">.io</span>
                                 </span>
                                 <span className="text-[9px] font-mono text-trust-dark font-bold tracking-[0.2em] animate-pulse opacity-40 uppercase -mt-1 ml-0.5">
                                     ... launching soon
