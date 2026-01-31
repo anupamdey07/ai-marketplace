@@ -68,7 +68,7 @@ const initialProducts: Product[] = [
         id: 'real-2',
         name: 'Sticker Box',
         category: 'Prompt-to-Product',
-        subCategory: 'Physical Boxes',
+        subCategory: 'Physical prompt boxes',
         description: 'Voice-activated AI sticker printer for kids. Transform imaginative ideas into tangible stickers instantly using 203 DPI ink-free thermal technology. Features built-in content filters and high-privacy local processing.',
         price: 95,
         images: ['https://stickerbox.com/cdn/shop/files/stickerbox-landing-gif.gif?v=1762813714&width=1920'],

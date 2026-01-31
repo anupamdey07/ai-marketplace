@@ -16,7 +16,7 @@ const CATEGORIES = [
 ];
 
 const SUBCATEGORIES: Record<string, string[]> = {
-    'Prompt-to-Product': ['All', 'Physical Boxes', 'Dropship'],
+    'Prompt-to-Product': ['All', 'Physical prompt boxes', 'Dropship'],
     '3D Printing Innovation': ['All', 'Consumer 3D Printers', '3D Printed Products']
 };
 

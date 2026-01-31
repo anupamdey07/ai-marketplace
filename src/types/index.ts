@@ -11,7 +11,7 @@ export type ProductCategory =
     | 'Voice Assistants';
 
 // Subcategories for specific categories
-export type PromptToProductSubcategory = 'Physical Boxes' | 'Dropship';
+export type PromptToProductSubcategory = 'Physical prompt boxes' | 'Dropship';
 export type ThreeDPrintedSubcategory = 'Consumer 3D Printers' | '3D Printed Products';
 
 export type ProductSubcategory = PromptToProductSubcategory | ThreeDPrintedSubcategory;

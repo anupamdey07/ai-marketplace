@@ -2,13 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '@/store/useProductStore';
-import { ProductCategory } from '@/types';
 
 export default function LeaderboardPage() {
     const navigate = useNavigate();
     const { products, upvoteProduct } = useProductStore();
     const [timeframe, setTimeframe] = useState<'This Week' | 'All Time'>('This Week');
-    const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'All Categories'>('All Categories');
+    const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
     const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const timeDropdownRef = useRef<HTMLDivElement>(null);
@@ -29,18 +28,22 @@ export default function LeaderboardPage() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const categories: (ProductCategory | 'All Categories')[] = [
+    const filterOptions: string[] = [
         'All Categories',
         'Programmable Robotics',
-        'Prompt-to-Product',
-        '3D Printing Innovation',
+        'Physical prompt boxes',
+        'Dropship',
+        'Consumer 3D Printers',
+        '3D Printed Products',
         'Assistant Boxes',
         'Kids Learning Tools',
         'Voice Assistants'
     ];
 
     const filteredProducts = products.filter(p =>
-        selectedCategory === 'All Categories' || p.category === selectedCategory
+        selectedCategory === 'All Categories' ||
+        p.category === selectedCategory ||
+        p.subCategory === selectedCategory
     );
 
     return (
@@ -123,7 +126,7 @@ export default function LeaderboardPage() {
                                         className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-background-light overflow-hidden z-50 p-2"
                                     >
                                         <div className="max-h-64 overflow-y-auto custom-scrollbar">
-                                            {categories.map((cat) => (
+                                            {filterOptions.map((cat) => (
                                                 <button
                                                     key={cat}
                                                     onClick={() => {
