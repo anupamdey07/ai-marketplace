@@ -18,8 +18,8 @@ const categories: CategoryInfo[] = [
         slug: 'prompt-to-product',
     },
     {
-        id: '3D Printed Innovations',
-        name: '3D Printed Innovations',
+        id: '3D Printing Innovation',
+        name: '3D Printing Innovation',
         icon: '🖨️',
         description: 'Physical creations',
         slug: '3d-printed',

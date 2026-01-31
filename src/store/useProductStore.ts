@@ -107,7 +107,7 @@ const initialProducts: Product[] = [
     {
         id: 'real-4',
         name: 'Bambu Lab A1 Mini',
-        category: '3D Printed Innovations',
+        category: '3D Printing Innovation',
         subCategory: 'Consumer 3D Printers',
         description: 'The ultimate beginner-friendly 3D printer with AI active flow control and automatic bed leveling. Features spaghetti detection and remote monitoring via camera. Perfect for high-speed, reliable printing.',
         price: 249,
@@ -133,7 +133,7 @@ const initialProducts: Product[] = [
     {
         id: 'real-5',
         name: 'Creality K1C',
-        category: '3D Printed Innovations',
+        category: '3D Printing Innovation',
         subCategory: 'Consumer 3D Printers',
         description: 'Enclosed AI-powered 3D printer with an integrated AI camera for real-time monitoring and failure detection. Optimized for carbon fiber and other technical filaments. 600mm/s top speed.',
         price: 499,
@@ -160,7 +160,7 @@ const initialProducts: Product[] = [
     {
         id: 'real-7',
         name: 'Vento Argo R1 Adaptive',
-        category: '3D Printed Innovations',
+        category: '3D Printing Innovation',
         subCategory: '3D Printed Products',
         description: '3D-printed short-nosed racing saddle with a carbon-reinforced nylon shell and highly responsive zonal cushioning. Developed using Carbon® Digital Light Synthesis™ technology for ultimate pressure relief.',
         price: 299,
@@ -265,7 +265,7 @@ const initialProducts: Product[] = [
     {
         id: '2',
         name: 'Planted AI',
-        category: '3D Printed Innovations',
+        category: '3D Printing Innovation',
         subCategory: '3D Printed Products',
         description: 'Smart soil monitoring and hydration system.',
         price: 45,
@@ -356,7 +356,7 @@ const initialProducts: Product[] = [
     {
         id: '8',
         name: 'EcoMonitor 1',
-        category: '3D Printed Innovations',
+        category: '3D Printing Innovation',
         subCategory: '3D Printed Products',
         description: 'Solar-powered air quality sensor node.',
         price: 55,
@@ -387,7 +387,7 @@ const initialProducts: Product[] = [
     {
         id: '10',
         name: 'PetFeed AI',
-        category: '3D Printed Innovations',
+        category: '3D Printing Innovation',
         subCategory: '3D Printed Products',
         description: 'Facial recognition based automatic pet feeder.',
         price: 180,

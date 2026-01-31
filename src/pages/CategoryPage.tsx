@@ -10,7 +10,7 @@ export default function CategoryPage() {
     const slugMap: Record<string, string> = {
         'robotics': 'Programmable Robotics',
         'prompt-to-product': 'Prompt-to-Product',
-        '3d-printed': '3D Printed Innovations',
+        '3d-printed': '3D Printing Innovation',
         'assistants': 'Assistant Boxes',
         'kids-learning': 'Kids Learning Tools',
         'voice': 'Voice Assistants'

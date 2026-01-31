@@ -5,7 +5,7 @@ export type ProductStatus = 'Coming Soon' | 'Available' | 'Sold Out';
 export type ProductCategory =
     | 'Programmable Robotics'
     | 'Prompt-to-Product'
-    | '3D Printed Innovations'
+    | '3D Printing Innovation'
     | 'Assistant Boxes'
     | 'Kids Learning Tools'
     | 'Voice Assistants';

@@ -19,8 +19,8 @@ const categories: CategoryInfo[] = [
         slug: '3d-printed',
     },
     {
-        id: '3D Printed Innovations',
-        name: '3D Printed Innovations',
+        id: '3D Printing Innovation',
+        name: '3D Printing Innovation',
         icon: '🖨️',
         description: 'Custom 3D printed gadgets',
         slug: '3d-printed',
