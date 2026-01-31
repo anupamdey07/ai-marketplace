@@ -281,7 +281,7 @@ export default function ProductPage() {
                                     <motion.button
                                         onClick={() => handleUpvote(product.id)}
                                         whileTap={{ scale: 0.95 }}
-                                        className="btn-outline w-full py-3 text-lg bg-white border-primary"
+                                        className="btn w-full py-3 text-lg bg-white text-primary border-0 shadow-[inset_0_0_0_1px_rgba(200,200,200,0.5)] hover:shadow-[inset_0_0_0_1px_rgba(180,180,180,0.7)] hover:bg-gray-50/50 active:scale-95 transition-all"
                                     >
                                         Upvote Project
                                     </motion.button>
