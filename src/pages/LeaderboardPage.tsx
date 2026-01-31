@@ -172,7 +172,7 @@ export default function LeaderboardPage() {
                 </div>
 
                 <div className="bg-white rounded-[40px] shadow-soft border border-background-light overflow-hidden">
-                    <div className="hidden md:grid grid-cols-[80px_1fr_150px_100px] gap-6 p-6 bg-secondary/30 border-b border-background-light text-sm font-bold text-primary/60 uppercase tracking-widest">
+                    <div className="hidden md:grid grid-cols-[80px_1fr_150px_100px] gap-4 px-6 py-3 bg-secondary/30 border-b border-background-light text-[10px] font-bold text-primary/60 uppercase tracking-widest">
                         <div className="text-center">Rank</div>
                         <div>Product</div>
                         <div className="text-center">Points</div>
@@ -190,21 +190,21 @@ export default function LeaderboardPage() {
                             >
                                 <Link
                                     to={`/products/${product.slug}`}
-                                    className="p-4 md:p-6 grid grid-cols-[40px_1fr_70px] md:grid-cols-[80px_1fr_150px_100px] items-center gap-x-4 md:gap-x-6 gap-y-4"
+                                    className="px-4 py-2 md:px-6 md:py-3 grid grid-cols-[40px_1fr_70px] md:grid-cols-[80px_1fr_150px_100px] items-center gap-x-3 md:gap-x-4"
                                 >
-                                    <div className="flex flex-col items-center gap-1 md:gap-2">
-                                        <span className="text-sm md:text-xl font-bold text-charcoal/20">#{index + 1}</span>
+                                    <div className="flex flex-col items-center gap-0.5 md:gap-1">
+                                        <span className="text-xs md:text-lg font-bold text-charcoal/20">#{index + 1}</span>
                                         <button
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 upvoteProduct(product.id);
                                             }}
-                                            className="p-1.5 md:p-2 hover:bg-secondary rounded-xl transition-colors group/upvote"
+                                            className="p-1 md:p-1.5 hover:bg-secondary rounded-lg transition-colors group/upvote"
                                             aria-label="Upvote"
                                         >
                                             <svg
-                                                className="w-4 h-4 md:w-5 md:h-5 text-charcoal/40 group-hover/upvote:text-accent group-hover/upvote:scale-125 transition-all"
+                                                className="w-3.5 h-3.5 md:w-4 md:h-4 text-charcoal/40 group-hover/upvote:text-accent group-hover/upvote:scale-125 transition-all"
                                                 fill="currentColor"
                                                 viewBox="0 0 24 24"
                                             >
@@ -213,8 +213,8 @@ export default function LeaderboardPage() {
                                         </button>
                                     </div>
 
-                                    <div className="flex gap-3 md:gap-6 items-center overflow-hidden">
-                                        <div className="w-12 h-12 md:w-20 md:h-20 bg-background rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-4xl border border-background-light shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+                                    <div className="flex gap-2.5 md:gap-4 items-center overflow-hidden">
+                                        <div className="w-10 h-10 md:w-14 md:h-14 bg-background rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-2xl border border-background-light shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
                                             {product.images[0]?.startsWith('http') || product.images[0]?.startsWith('/') ? (
                                                 <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
                                             ) : (
@@ -222,8 +222,8 @@ export default function LeaderboardPage() {
                                             )}
                                         </div>
                                         <div className="min-w-0">
-                                            <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 mb-1">
-                                                <h3 className="font-heading font-bold text-base md:text-xl text-primary group-hover:text-accent transition-colors truncate">
+                                            <div className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2 mb-0.5">
+                                                <h3 className="font-heading font-bold text-sm md:text-base text-primary group-hover:text-accent transition-colors truncate">
                                                     {product.name}
                                                 </h3>
                                                 <span className="inline-block w-fit text-[8px] md:text-[10px] font-bold text-charcoal/40 bg-background-light px-1.5 md:px-2 py-0.5 rounded uppercase tracking-wider">
@@ -242,9 +242,9 @@ export default function LeaderboardPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col items-center gap-0 md:gap-1">
-                                        <span className="text-lg md:text-2xl font-bold text-primary">{product.upvotes}</span>
-                                        <span className="text-[8px] md:text-xs font-bold text-charcoal/30 uppercase tracking-widest">Points</span>
+                                    <div className="flex flex-col items-center gap-0">
+                                        <span className="text-base md:text-xl font-bold text-primary">{product.upvotes}</span>
+                                        <span className="text-[7px] md:text-[9px] font-bold text-charcoal/30 uppercase tracking-widest">Points</span>
                                     </div>
 
                                     <div className="hidden md:flex justify-center">
