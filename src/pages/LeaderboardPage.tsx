@@ -1,10 +1,30 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '@/store/useProductStore';
+import { ProductCategory } from '@/types';
 
 export default function LeaderboardPage() {
     const navigate = useNavigate();
     const { products, upvoteProduct } = useProductStore();
+    const [timeframe, setTimeframe] = useState<'This Week' | 'All Time'>('This Week');
+    const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'All Categories'>('All Categories');
+    const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
+    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+
+    const categories: (ProductCategory | 'All Categories')[] = [
+        'All Categories',
+        'Programmable Robotics',
+        'Prompt-to-Product',
+        '3D Printing Innovation',
+        'Assistant Boxes',
+        'Kids Learning Tools',
+        'Voice Assistants'
+    ];
+
+    const filteredProducts = products.filter(p =>
+        selectedCategory === 'All Categories' || p.category === selectedCategory
+    );
 
     return (
         <div className="bg-background min-h-screen py-20">
@@ -22,12 +42,87 @@ export default function LeaderboardPage() {
                     </div>
 
                     <div className="flex gap-4">
-                        <button className="px-4 py-2 bg-white rounded-xl border border-background-light text-sm font-bold text-primary hover:bg-background-light transition-colors">
-                            This Week
-                        </button>
-                        <button className="px-4 py-2 text-sm font-bold text-charcoal/40 hover:text-primary transition-colors">
-                            All Time
-                        </button>
+                        {/* Timeframe Dropdown */}
+                        <div className="relative">
+                            <button
+                                onClick={() => {
+                                    setIsTimeDropdownOpen(!isTimeDropdownOpen);
+                                    setIsCategoryDropdownOpen(false);
+                                }}
+                                className="flex items-center gap-2 px-6 py-3 bg-white rounded-2xl border border-background-light text-sm font-bold text-primary hover:border-primary/20 transition-all shadow-sm active:scale-95"
+                            >
+                                {timeframe}
+                                <svg className={`w-4 h-4 transition-transform ${isTimeDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <AnimatePresence>
+                                {isTimeDropdownOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-background-light overflow-hidden z-50 p-2"
+                                    >
+                                        {['This Week', 'All Time'].map((option) => (
+                                            <button
+                                                key={option}
+                                                onClick={() => {
+                                                    setTimeframe(option as any);
+                                                    setIsTimeDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-colors ${timeframe === option ? 'bg-primary text-secondary' : 'text-charcoal/60 hover:bg-background-light'}`}
+                                            >
+                                                {option}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Category Dropdown */}
+                        <div className="relative">
+                            <button
+                                onClick={() => {
+                                    setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+                                    setIsTimeDropdownOpen(false);
+                                }}
+                                className="flex items-center gap-2 px-6 py-3 bg-white rounded-2xl border border-background-light text-sm font-bold text-primary hover:border-primary/20 transition-all shadow-sm active:scale-95"
+                            >
+                                {selectedCategory}
+                                <svg className={`w-4 h-4 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <AnimatePresence>
+                                {isCategoryDropdownOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-background-light overflow-hidden z-50 p-2"
+                                    >
+                                        <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                                            {categories.map((cat) => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => {
+                                                        setSelectedCategory(cat);
+                                                        setIsCategoryDropdownOpen(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold transition-colors mb-1 last:mb-0 ${selectedCategory === cat ? 'bg-primary text-secondary' : 'text-charcoal/60 hover:bg-background-light'}`}
+                                                >
+                                                    {cat}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </div>
 
@@ -40,7 +135,7 @@ export default function LeaderboardPage() {
                     </div>
 
                     <div className="divide-y divide-background-light">
-                        {products.map((product, index) => (
+                        {filteredProducts.map((product, index) => (
                             <motion.div
                                 key={product.id}
                                 layout
@@ -93,8 +188,8 @@ export default function LeaderboardPage() {
                                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-charcoal/60">
                                                 <span>by <span className="underline decoration-secondary underline-offset-2 cursor-pointer font-medium hover:text-accent transition-colors">{product.creator.name}</span></span>
                                                 <span className={`font-bold ${product.skill_level === 'Beginner' ? 'text-mint' :
-                                                        product.skill_level === 'Intermediate' ? 'text-accent' :
-                                                            'text-primary'
+                                                    product.skill_level === 'Intermediate' ? 'text-accent' :
+                                                        'text-primary'
                                                     }`}>
                                                     {product.skill_level}
                                                 </span>
