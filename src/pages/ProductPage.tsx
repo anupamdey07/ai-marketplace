@@ -4,10 +4,14 @@ import { useProductStore } from '@/store/useProductStore';
 import Badge from '@/components/common/Badge';
 import TrustIndicator from '@/components/common/TrustIndicator';
 import ComingSoonPage from './ComingSoonPage';
+import { useUIStore } from '@/store/useUIStore';
+import { useCartStore } from '@/store/useCartStore';
 
 export default function ProductPage() {
     const { slug } = useParams();
     const { products, upvoteProduct } = useProductStore();
+    const { openCart } = useUIStore();
+    const { addItem } = useCartStore();
 
     const product = products.find(p => p.slug === slug);
 
@@ -212,7 +216,13 @@ export default function ProductPage() {
                                     <span className="text-4xl font-bold text-primary">€{product.price}</span>
                                     <Badge type="new" label="Digital Assets Included" />
                                 </div>
-                                <button className="btn-primary w-full py-4 text-lg mb-4">
+                                <button
+                                    onClick={() => {
+                                        addItem(product);
+                                        openCart();
+                                    }}
+                                    className="btn-primary w-full py-4 text-lg mb-4"
+                                >
                                     Get Project Kit
                                 </button>
                                 {product.external_link && (

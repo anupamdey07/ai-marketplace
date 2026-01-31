@@ -9,7 +9,7 @@ import Badge from '@/components/common/Badge';
 export default function ProfilePage() {
     const { userId } = useParams(); // Should match route param
     const { products } = useProductStore();
-    const [activeTab, setActiveTab] = useState<'products' | 'posts'>('products');
+    const [activeTab, setActiveTab] = useState<'products' | 'posts' | 'bookmarked'>('products');
 
     // Find the creator from the products list based on ID
     // In a real app, we'd fetch user data separately
@@ -68,13 +68,27 @@ export default function ProfilePage() {
                         <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-green-500 border-4 border-white" title="Online now"></div>
                     </motion.div>
 
-                    <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary mb-2 flex items-center gap-3">
-                        {creator.name}
-                        <Badge
-                            type={creator.badge}
-                            label={creator.badge === 'Contributor' ? 'Contributed' : undefined}
-                            className="text-xs py-1 px-3 uppercase tracking-wider"
-                        />
+                    <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary mb-2 flex flex-col md:flex-row items-center gap-3">
+                        <div className="flex items-center gap-3">
+                            {creator.name}
+                            <Badge
+                                type={creator.badge}
+                                label={creator.badge === 'Contributor' ? 'Contributed' : undefined}
+                                className="text-xs py-1 px-3 uppercase tracking-wider"
+                            />
+                        </div>
+
+                        {/* Governance Tier Badge */}
+                        <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border-2 flex items-center gap-2 ${(creator.governance_tokens || 0) >= 1000 ? 'bg-indigo-50 border-indigo-200 text-indigo-600' :
+                            (creator.governance_tokens || 0) >= 500 ? 'bg-amber-50 border-amber-200 text-amber-600' :
+                                (creator.governance_tokens || 0) >= 100 ? 'bg-emerald-50 border-emerald-200 text-emerald-600' :
+                                    'bg-slate-50 border-slate-200 text-slate-600'
+                            }`}>
+                            <span className="w-2 h-2 rounded-full animate-pulse bg-current"></span>
+                            {(creator.governance_tokens || 0) >= 1000 ? 'Guardian' :
+                                (creator.governance_tokens || 0) >= 500 ? 'Curator' :
+                                    (creator.governance_tokens || 0) >= 100 ? 'Contributor' : 'Observer'} Tier
+                        </div>
                     </h1>
 
                     <a
@@ -115,12 +129,15 @@ export default function ProfilePage() {
                             <div className="text-xs text-charcoal/50 uppercase tracking-wider font-bold">Products</div>
                         </div>
                         <div className="text-center">
-                            <div className="font-bold text-xl text-primary">{Math.floor(creator.credibility_score * 12.5)}</div>
-                            <div className="text-xs text-charcoal/50 uppercase tracking-wider font-bold">Followers</div>
+                            <div className="font-bold text-xl text-accent flex items-center justify-center gap-1">
+                                <span>🪙</span>
+                                {creator.governance_tokens || 0}
+                            </div>
+                            <div className="text-xs text-charcoal/50 uppercase tracking-wider font-bold">Tokens</div>
                         </div>
                         <div className="text-center">
-                            <div className="font-bold text-xl text-primary">{Math.floor(creator.credibility_score * 0.4)}</div>
-                            <div className="text-xs text-charcoal/50 uppercase tracking-wider font-bold">Following</div>
+                            <div className="font-bold text-xl text-primary">{Math.floor(creator.credibility_score * 12.5)}</div>
+                            <div className="text-xs text-charcoal/50 uppercase tracking-wider font-bold">Followers</div>
                         </div>
                     </div>
 
@@ -159,12 +176,21 @@ export default function ProfilePage() {
                                 <span className="text-lg">📸</span> Community Posts
                             </span>
                         </button>
+                        <button
+                            onClick={() => setActiveTab('bookmarked')}
+                            className={`pb-4 px-4 text-sm font-bold uppercase tracking-widest transition-all relative ${activeTab === 'bookmarked' ? 'text-primary border-b-2 border-primary' : 'text-charcoal/40 hover:text-primary/70 border-b-2 border-transparent'
+                                }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <span className="text-lg">🔖</span> Bookmarked
+                            </span>
+                        </button>
                     </div>
                 </div>
 
                 {/* Tab Content */}
                 <AnimatePresence mode="wait">
-                    {activeTab === 'products' ? (
+                    {activeTab === 'products' && (
                         <motion.div
                             key="products"
                             initial={{ opacity: 0, y: 10 }}
@@ -176,7 +202,8 @@ export default function ProfilePage() {
                                 <ProductCard key={product.id} product={product} />
                             ))}
                         </motion.div>
-                    ) : (
+                    )}
+                    {activeTab === 'posts' && (
                         <motion.div
                             key="posts"
                             initial={{ opacity: 0, y: 10 }}
@@ -190,7 +217,6 @@ export default function ProfilePage() {
                                     <div className="absolute inset-0 bg-secondary/20 flex items-center justify-center text-4xl text-primary/20">
                                         📷
                                     </div>
-                                    {/* Overlay on hover */}
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-6 text-white font-bold">
                                         <div className="flex items-center gap-1">
                                             <span>❤️</span> {post.likes}
@@ -207,8 +233,24 @@ export default function ProfilePage() {
                             </div>
                         </motion.div>
                     )}
+                    {activeTab === 'bookmarked' && (
+                        <motion.div
+                            key="bookmarked"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                        >
+                            {products.slice(0, 2).map(product => (
+                                <ProductCard key={`bookmark-${product.id}`} product={product} />
+                            ))}
+                            <div className="lg:col-span-3 text-center py-10 opacity-40">
+                                <p className="font-bold italic">Curating your collection...</p>
+                            </div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
             </div>
-        </div >
+        </div>
     );
 }

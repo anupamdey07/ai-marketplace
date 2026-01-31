@@ -183,7 +183,7 @@ const initialProducts: Product[] = [
         id: 'real-8',
         name: 'Cloud Factory AI Jewelry',
         category: 'Prompt-to-Product',
-        subCategory: 'Dropship',
+        subCategory: 'Custom 3D Printed Dropship',
         description: 'Launch your personal branded jewelry merchandise with 3D-printed silver. Cloud Factory handles everything from AI-assisted design to sustainable production and drop-shipping fulfillment. Zero inventory, 100% professional jewelry quality.',
         price: 120,
         images: ['https://cdn.prod.website-files.com/631f177de10b3f511d17d488/631f177de10b3f2af217d4a6_AlanWalker-3-square.jpg'],
@@ -424,6 +424,38 @@ const initialProducts: Product[] = [
         privacy_verified: true,
         launch_date: '2023-09-12',
         slug: 'weatherbox',
+        skill_level: 'Beginner'
+    },
+    {
+        id: 'real-9',
+        name: 'AI-Powered Box',
+        category: 'Assistant Boxes',
+        subCategory: 'Kids Learning',
+        description: 'A versatile AI assistant hardware designed for home companionship and learning aid. Features local voice processing and customizable personas.',
+        price: 149,
+        images: ['📦'],
+        creator: { id: 'u13', name: 'OpenAI Hardware', username: 'openai_hardware', badge: 'Maker', credibility_score: 95, products: [], contributions: [], posts: [] },
+        status: 'Available',
+        upvotes: 112,
+        privacy_verified: true,
+        launch_date: '2025-12-01',
+        slug: 'ai-powered-box',
+        skill_level: 'Beginner'
+    },
+    {
+        id: 'real-10',
+        name: 'AI-Powered Bhagavad Gita Box',
+        category: 'Assistant Boxes',
+        subCategory: 'Voice Assistants',
+        description: 'A spiritual and cultural AI assistant providing guidance and meditation companionship based on the teachings of the Bhagavad Gita.',
+        price: 159,
+        images: ['🕉️'],
+        creator: { id: 'u14', name: 'DharmaTech', username: 'dharma_tech', badge: 'Maker', credibility_score: 92, products: [], contributions: [], posts: [] },
+        status: 'Available',
+        upvotes: 98,
+        privacy_verified: true,
+        launch_date: '2025-11-15',
+        slug: 'bhagavad-gita-box',
         skill_level: 'Beginner'
     }
 ];

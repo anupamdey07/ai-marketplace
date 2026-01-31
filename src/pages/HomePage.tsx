@@ -42,8 +42,8 @@ export default function HomePage() {
                             className="text-center lg:text-left relative z-20"
                         >
                             <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
-                                <Badge type="new" label="Beta V2.0" />
-                                <span className="text-primary/60 text-sm font-bold tracking-widest uppercase">The Learning Marketplace</span>
+                                <Badge type="new" label="Beta V3.0" />
+                                <span className="text-primary/60 text-sm font-bold tracking-widest uppercase">The Community Marketplace</span>
                             </div>
 
                             <motion.h1
@@ -96,7 +96,7 @@ export default function HomePage() {
                 <div className="container-custom">
                     <div className="text-center mb-16">
                         <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4 text-primary">
-                            Featured: Beginner-Friendly Picks
+                            Featured: Exclusive Beginner Pick(s) for January 2026
                         </h2>
                         <p className="text-charcoal/70 text-lg max-w-2xl mx-auto">
                             Our most-vetted picks for first-time makers. No degree required.
@@ -238,14 +238,12 @@ export default function HomePage() {
                                             )}
                                         </div>
                                         {product.status === 'Coming Soon' ? (
-                                            <span className="flex items-center gap-1.5 px-2 py-0.5 bg-yellow-400/10 rounded-full border border-yellow-400/20">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span>
-                                                <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-widest">Coming Soon</span>
+                                            <span className="status-pill bg-yellow-400/10 border-yellow-400/20 text-yellow-600">
+                                                Coming Soon
                                             </span>
                                         ) : (
-                                            <span className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Available</span>
+                                            <span className="status-pill bg-emerald-500/10 border-emerald-500/20 text-emerald-600">
+                                                Available
                                             </span>
                                         )}
                                     </div>

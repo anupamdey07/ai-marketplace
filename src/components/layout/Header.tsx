@@ -2,6 +2,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProductStore } from '@/store/useProductStore';
+import { useUIStore } from '@/store/useUIStore';
+import { useCartStore } from '@/store/useCartStore';
+import CartSidebar from './CartSidebar';
+import { Product } from '@/types';
 
 export default function Header() {
     const navigate = useNavigate();
@@ -9,6 +13,9 @@ export default function Header() {
     const [searchQuery, setSearchQuery] = useState('');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const { isCartOpen, openCart, closeCart, isLoginModalOpen, openLoginModal, closeLoginModal } = useUIStore();
+    const { items: cartItems } = useCartStore();
     const searchRef = useRef<HTMLDivElement>(null);
 
     const navItems = [
@@ -21,7 +28,6 @@ export default function Header() {
     const secondaryPages = [
         { label: 'About', path: '/about', icon: 'ℹ️' },
         { label: 'Trust', path: '/trust', icon: '🛡️' },
-        { label: 'Cart', path: '/cart', icon: '🛒' },
         { label: 'Profile', path: '/profile/pollen', icon: '👤' },
     ];
 
@@ -232,33 +238,93 @@ export default function Header() {
                     {/* Right Section */}
                     <div className="flex items-center gap-4">
                         {/* Notifications */}
-                        <button className="p-2 hover:bg-background-light rounded-lg transition-colors hidden md:block group">
-                            <svg
-                                className="w-5 h-5 text-charcoal/70 group-hover:text-primary"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                                className="p-2 hover:bg-background-light rounded-lg transition-colors hidden md:block group"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                                />
-                            </svg>
-                        </button>
+                                <svg
+                                    className="w-5 h-5 text-charcoal/70 group-hover:text-primary"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                                    />
+                                </svg>
+                                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full border-2 border-white"></span>
+                            </button>
+
+                            <AnimatePresence>
+                                {isNotificationOpen && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-10"
+                                            onClick={() => setIsNotificationOpen(false)}
+                                        />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            className="absolute right-0 mt-2 w-80 bg-white rounded-3xl shadow-2xl border border-background-light overflow-hidden z-20"
+                                        >
+                                            <div className="p-4 border-b border-background-light flex items-center justify-between">
+                                                <h3 className="font-bold text-primary">Notifications</h3>
+                                                <span className="text-[10px] font-bold text-accent uppercase">2 New</span>
+                                            </div>
+                                            <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                                                {[
+                                                    { id: 1, text: 'Your "AI Mirror" upvote count reached 50!', time: '2m ago', icon: '🚀' },
+                                                    { id: 2, text: 'New comment on your "Smart Desk" post.', time: '1h ago', icon: '💬' },
+                                                    { id: 3, text: 'Governance Tier updated to Contributor!', time: '5h ago', icon: '💎' },
+                                                ].map((notif) => (
+                                                    <div key={notif.id} className="p-4 hover:bg-secondary/20 transition-colors cursor-pointer border-b border-background-light last:border-0">
+                                                        <div className="flex gap-3">
+                                                            <span className="text-xl shrink-0">{notif.icon}</span>
+                                                            <div className="min-w-0">
+                                                                <p className="text-sm text-charcoal/80 leading-snug">{notif.text}</p>
+                                                                <p className="text-[10px] text-charcoal/40 font-bold mt-1 uppercase">{notif.time}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button className="w-full py-3 text-xs font-bold text-primary/40 hover:text-primary transition-colors bg-background-light/30">
+                                                View all notifications
+                                            </button>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
 
                         {/* Cart */}
                         <button
-                            onClick={() => navigate('/cart')}
-                            className="p-2 hover:bg-background-light rounded-lg transition-colors hidden md:block group"
+                            onClick={openCart}
+                            className="p-2 hover:bg-background-light rounded-lg transition-colors hidden md:block group relative"
                         >
                             <svg className="w-5 h-5 text-charcoal/70 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
+                            {cartItems.length > 0 && (
+                                <span className="absolute top-0 right-0 w-4 h-4 bg-accent text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                    {cartItems.length}
+                                </span>
+                            )}
                         </button>
 
-                        {/* Profile */}
+                        {/* Profile/Login */}
+                        <button
+                            onClick={openLoginModal}
+                            className="bg-primary text-secondary px-6 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all active:scale-95 hidden md:block"
+                        >
+                            Login
+                        </button>
+
                         <button
                             onClick={() => navigate('/profile/pollen')}
                             className="p-2 hover:bg-background-light rounded-lg transition-colors hidden md:block group"
@@ -317,13 +383,15 @@ export default function Header() {
                                     {item.label}
                                 </Link>
                             ))}
-                            <Link
-                                to="/cart"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-sm font-medium text-charcoal/70 hover:text-primary transition-colors"
+                            <button
+                                onClick={() => {
+                                    openCart();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="text-left text-sm font-medium text-charcoal/70 hover:text-primary transition-colors"
                             >
                                 Cart
-                            </Link>
+                            </button>
                             <Link
                                 to="/login"
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -335,6 +403,55 @@ export default function Header() {
                     </div>
                 </motion.div>
             </div>
+
+            {/* Cart Sidebar */}
+            <CartSidebar
+                isOpen={isCartOpen}
+                onClose={closeCart}
+                items={cartItems}
+            />
+
+            {/* Login Modal Overlay */}
+            <AnimatePresence>
+                {isLoginModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={closeLoginModal}
+                            className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative bg-white rounded-3xl p-10 max-w-sm w-full shadow-2xl border border-background-light"
+                        >
+                            <h2 className="font-heading text-3xl font-bold text-primary mb-2 text-center">Join Community</h2>
+                            <p className="text-charcoal/60 text-center mb-8">Choose your preferred login method to participate in governance.</p>
+
+                            <div className="space-y-4">
+                                <button className="w-full flex items-center justify-center gap-4 py-4 rounded-xl bg-[#24292e] text-white font-bold hover:bg-black transition-all group">
+                                    <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                                    </svg>
+                                    Continue with GitHub
+                                </button>
+                                <button className="w-full flex items-center justify-center gap-4 py-4 rounded-xl bg-white border border-background-light text-charcoal font-bold hover:bg-secondary transition-all group">
+                                    <svg className="w-6 h-6 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                    </svg>
+                                    Continue with Google
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </header>
     );
 }

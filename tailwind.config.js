@@ -9,8 +9,9 @@ export default {
             colors: {
                 // AI Marketplace color palette from PRD v2
                 background: {
-                    DEFAULT: '#B2C9AD', // Sage Green
-                    light: '#D4E4CF',   // Light Sage
+                    DEFAULT: '#E8F0E6', // Light Sage (v3)
+                    light: '#F2F7F1',   // Very Light Sage (v3)
+                    surface: '#FAFCFA', // Near-white Surface (v3)
                 },
                 primary: {
                     DEFAULT: '#2D4A3E', // Deep Forest
