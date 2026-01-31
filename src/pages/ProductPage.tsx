@@ -272,9 +272,9 @@ export default function ProductPage() {
                                         href={product.external_link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="btn-accent w-full py-4 text-lg mb-4 text-center justify-center font-bold"
+                                        className="btn-accent w-full py-3 text-lg mb-4 text-center justify-center font-bold whitespace-nowrap flex items-center gap-1"
                                     >
-                                        Visit Official Project ↗
+                                        Visit Official Project <span>↗</span>
                                     </a>
                                 ) || null}
                                 <div className="relative">
