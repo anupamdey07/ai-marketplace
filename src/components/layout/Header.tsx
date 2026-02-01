@@ -111,8 +111,8 @@ export default function Header() {
                     {/* Logo + Primary Nav */}
                     <div className="flex items-center gap-10">
                         <Link to="/" className="flex items-start gap-4 group">
-                            <div className="group-hover:scale-110 transition-transform h-10 flex items-center shrink-0">
-                                <img src="/images/robot-logo.png" alt="machbar.tech logo" className="h-10 w-auto object-contain" />
+                            <div className="group-hover:scale-110 transition-transform h-15 flex items-center shrink-0">
+                                <img src="/images/robot-logo-colored.png" alt="machbar.tech logo" className="h-15 w-auto object-contain" />
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-heading font-black text-3xl text-primary leading-[1.2] lowercase tracking-tighter">
