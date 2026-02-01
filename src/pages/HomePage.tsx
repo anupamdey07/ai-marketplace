@@ -153,8 +153,7 @@ export default function HomePage() {
                                 </h2>
 
                                 <p className="text-lg text-charcoal/80 mb-6 leading-relaxed">
-                                    The ultimate first step into machbar hardware. Build, code, and bring your
-                                    first pet-like companion to life. Refined docs, guaranteed traction.
+                                    {reachyMini?.description || 'The ultimate first step into machbar hardware. Build, code, and bring your first pet-like companion to life.'}
                                 </p>
 
                                 <div className="mb-6 space-y-3">
