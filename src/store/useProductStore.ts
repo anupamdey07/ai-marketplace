@@ -10,6 +10,17 @@ interface ProductStore {
     upvoteProduct: (id: string) => Promise<void>;
 }
 
+// Helper to sort products: Real images first, then by upvotes
+const sortProducts = (a: Product, b: Product) => {
+    const aIsPlaceholder = !a.images || a.images.length === 0 || a.images[0] === '📦';
+    const bIsPlaceholder = !b.images || b.images.length === 0 || b.images[0] === '📦';
+
+    if (!aIsPlaceholder && bIsPlaceholder) return -1;
+    if (aIsPlaceholder && !bIsPlaceholder) return 1;
+
+    return b.upvotes - a.upvotes;
+};
+
 // Initial mock data with updated categories and researched products
 const initialProducts: Product[] = [
     {
@@ -489,7 +500,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         try {
             const products = await fetchAirtableProducts();
             if (products.length > 0) {
-                set({ products: products.sort((a, b) => b.upvotes - a.upvotes), isLoading: false });
+                console.log(`🟢 Successfully loaded ${products.length} products from Airtable`);
+                set({ products: products.sort(sortProducts), isLoading: false });
             } else {
                 set({ isLoading: false });
             }
@@ -506,7 +518,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         set((state) => ({
             products: [...state.products]
                 .map((p) => (p.id === id ? { ...p, upvotes: p.upvotes + 1 } : p))
-                .sort((a, b) => b.upvotes - a.upvotes),
+                .sort(sortProducts),
         }));
 
         // Persist to Airtable if it's an Airtable record
