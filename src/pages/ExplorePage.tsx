@@ -165,15 +165,15 @@ export default function ExplorePage() {
                     </div>
 
                     {/* Category Filter Chips */}
-                    <div className="flex flex-wrap gap-2 mt-8">
+                    <div className="flex flex-wrap gap-2 mt-6">
                         {CATEGORIES.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`px - 4 py - 2 rounded - full text - xs font - bold border transition - all ${activeCategory === cat
+                                className={`px-3 py-1 rounded-full text-[10px] font-bold border transition-all whitespace-nowrap ${activeCategory === cat
                                     ? 'bg-secondary border-primary/20 text-primary shadow-sm'
                                     : 'bg-white border-background-light text-charcoal/40 hover:border-primary/40'
-                                    } `}
+                                    }`}
                             >
                                 {cat}
                             </button>
@@ -193,10 +193,10 @@ export default function ExplorePage() {
                                     <button
                                         key={sub}
                                         onClick={() => setActiveSubCategory(sub)}
-                                        className={`px - 3 py - 1.5 rounded - full text - [10px] font - bold uppercase tracking - wider border transition - all ${activeSubCategory === sub
+                                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all whitespace-nowrap ${activeSubCategory === sub
                                             ? 'bg-primary text-white border-primary shadow-sm'
                                             : 'bg-white border-background-light text-charcoal/30 hover:text-charcoal hover:border-charcoal/20'
-                                            } `}
+                                            }`}
                                     >
                                         {sub}
                                     </button>
