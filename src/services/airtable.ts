@@ -16,33 +16,44 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
             view: 'Grid view' // Ensure this matches the view name in Airtable
         }).all();
 
-        return records.map(record => ({
-            id: record.id,
-            name: record.get('Name') as string,
-            category: record.get('Category') as ProductCategory,
-            description: record.get('Description') as string,
-            price: record.get('Price') as number,
-            images: record.get('Images') ? (record.get('Images') as any[]).map(img => img.url) : ['📦'],
-            creator: {
-                id: (record.get('Creator') as string[])?.[0] || 'unknown',
-                name: (record.get('CreatorName') as string) || 'Anonymous Maker',
-                username: (record.get('CreatorUsername') as string) || 'anonymous_maker',
-                bio: (record.get('CreatorBio') as string) || '',
-                location: (record.get('CreatorLocation') as string) || '',
-                badge: 'Maker',
-                credibility_score: 100,
-                products: [],
-                contributions: [],
-                posts: []
-            },
-            status: record.get('Status') as ProductStatus || 'Available',
-            upvotes: (record.get('Upvotes') as number) || 0,
-            privacy_verified: record.get('Privacy Verified') as boolean || false,
-            launch_date: record.get('Launch Date') as string || '',
-            slug: record.get('Slug') as string || '',
-            skill_level: record.get('Skill Level') as SkillLevel || 'Beginner',
-            external_link: record.get('External Link') as string
-        }));
+        return records.map(record => {
+            // Helper to get field case-insensitively or with common variations
+            const getField = (keys: string[]) => {
+                for (const key of keys) {
+                    const val = record.get(key);
+                    if (val !== undefined) return val;
+                }
+                return undefined;
+            };
+
+            return {
+                id: record.id,
+                name: (getField(['Name', 'name']) as string) || 'Untitled Product',
+                category: (getField(['Category', 'category']) as ProductCategory) || 'Other',
+                description: (getField(['Description', 'description']) as string) || '',
+                price: (getField(['Price', 'price']) as number) || 0,
+                images: getField(['Images', 'images']) ? (getField(['Images', 'images']) as any[]).map((img: any) => img.url) : ['📦'],
+                creator: {
+                    id: (getField(['Creator', 'creator', 'creator_id']) as any)?.[0] || getField(['Creator', 'creator', 'creator_id']) || 'unknown',
+                    name: (getField(['CreatorName', 'creator_name']) as string) || 'Anonymous Maker',
+                    username: (getField(['CreatorUsername', 'creator_username']) as string) || 'anonymous',
+                    bio: (getField(['CreatorBio', 'creator_bio']) as string) || '',
+                    location: (getField(['CreatorLocation', 'creator_location']) as string) || '',
+                    badge: 'Maker',
+                    credibility_score: 100,
+                    products: [],
+                    contributions: [],
+                    posts: []
+                },
+                status: (getField(['Status', 'status']) as ProductStatus) || 'Available',
+                upvotes: (getField(['Upvotes', 'upvotes']) as number) || 0,
+                privacy_verified: (getField(['Privacy Verified', 'privacy_verified']) as boolean) || false,
+                launch_date: (getField(['Launch Date', 'launch_date']) as string) || '',
+                slug: (getField(['Slug', 'slug']) as string) || '',
+                skill_level: (getField(['Skill Level', 'skill_level']) as SkillLevel) || 'Beginner',
+                external_link: (getField(['External Link', 'external_link']) as string) || ''
+            };
+        });
     } catch (error) {
         console.error('Error fetching from Airtable:', error);
         throw error;
