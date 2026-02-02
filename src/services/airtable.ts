@@ -63,87 +63,103 @@ export const fetchAirtableData = async (): Promise<{ products: Product[], posts:
 
         // 3. Process Products
         const products: Product[] = productRecords.map(record => {
-            const creatorIdRaw = record.get('creator_id') || record.get('Creator_ID');
-            const creatorId = Array.isArray(creatorIdRaw) ? creatorIdRaw[0] : (creatorIdRaw as string);
+            try {
+                const creatorIdRaw = record.get('creator_id') || record.get('Creator_ID');
+                const creatorId = Array.isArray(creatorIdRaw) ? creatorIdRaw[0] : (creatorIdRaw as string);
 
-            let creator = makersMap.get(creatorId);
-            if (!creator) {
-                // Create a placeholder if maker not found
-                creator = {
-                    id: creatorId || 'unknown',
-                    name: 'Anonymous Maker',
-                    username: 'anonymous',
-                    badge: 'Maker',
-                    credibility_score: 100,
-                    products: [],
-                    contributions: [],
-                    posts: []
+                let creator = makersMap.get(creatorId);
+                if (!creator) {
+                    creator = {
+                        id: creatorId || 'unknown',
+                        name: 'Anonymous Maker',
+                        username: 'anonymous',
+                        badge: 'Maker',
+                        credibility_score: 100,
+                        products: [],
+                        contributions: [],
+                        posts: []
+                    };
+                }
+
+                const rawImages = record.get('images');
+                const images = Array.isArray(rawImages)
+                    ? rawImages.map((img: any) => img.url)
+                    : (typeof rawImages === 'string' ? [rawImages] : ['📦']);
+
+                const product: Product = {
+                    id: record.id,
+                    name: (record.get('name') as string) || (record.get('Name') as string) || 'Untitled Product',
+                    category: (record.get('category') as ProductCategory) || 'Other' as any,
+                    description: (record.get('description') as string) || '',
+                    price: (record.get('price') as number) || 0,
+                    images: images,
+                    creator: creator,
+                    status: (record.get('status') as ProductStatus) || 'Available',
+                    upvotes: (record.get('upvotes') as number) || 0,
+                    privacy_verified: (record.get('privacy_verified') as boolean) || false,
+                    launch_date: (record.get('launch_date') as string) || '',
+                    slug: (record.get('slug') as string) || '',
+                    skill_level: (record.get('skill_level') as SkillLevel) || 'Beginner',
+                    external_link: (record.get('external_link') as string) || ''
                 };
+
+                creator.products.push(product);
+                return product;
+            } catch (err) {
+                console.error(`❌ Error processing product record ${record.id}:`, err);
+                throw err;
             }
-
-            const product: Product = {
-                id: record.id,
-                name: (record.get('name') as string) || (record.get('Name') as string) || 'Untitled Product',
-                category: (record.get('category') as ProductCategory) || 'Other' as any,
-                description: (record.get('description') as string) || '',
-                price: (record.get('price') as number) || 0,
-                images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : ['📦'],
-                creator: creator,
-                status: (record.get('status') as ProductStatus) || 'Available',
-                upvotes: (record.get('upvotes') as number) || 0,
-                privacy_verified: (record.get('privacy_verified') as boolean) || false,
-                launch_date: (record.get('launch_date') as string) || '',
-                slug: (record.get('slug') as string) || '',
-                skill_level: (record.get('skill_level') as SkillLevel) || 'Beginner',
-                external_link: (record.get('external_link') as string) || ''
-            };
-
-            // Link product to creator
-            creator.products.push(product);
-            return product;
         });
 
-        // Create a quick lookup for products by ID
         const productsMap = new Map(products.map(p => [p.id, p]));
 
         // 4. Process Posts
         const posts: CommunityPost[] = postsRecords.map(record => {
-            const creatorIdRaw = record.get('creator_id') || record.get('author_id') || record.get('ID');
-            const creatorId = Array.isArray(creatorIdRaw) ? creatorIdRaw[0] : (creatorIdRaw as string);
+            try {
+                const creatorIdRaw = record.get('creator_id') || record.get('author_id') || record.get('ID');
+                const creatorId = Array.isArray(creatorIdRaw) ? creatorIdRaw[0] : (creatorIdRaw as string);
 
-            let author = makersMap.get(creatorId);
-            if (!author) {
-                author = {
-                    id: creatorId || 'unknown',
-                    name: 'Anonymous Maker',
-                    username: 'anonymous',
-                    badge: 'Maker',
-                    credibility_score: 100,
-                    products: [],
-                    contributions: [],
-                    posts: []
+                let author = makersMap.get(creatorId);
+                if (!author) {
+                    author = {
+                        id: creatorId || 'unknown',
+                        name: 'Anonymous Maker',
+                        username: 'anonymous',
+                        badge: 'Maker',
+                        credibility_score: 100,
+                        products: [],
+                        contributions: [],
+                        posts: []
+                    };
+                }
+
+                const productIdRaw = record.get('product_id') || record.get('Product_ID');
+                const productId = Array.isArray(productIdRaw) ? productIdRaw[0] : (productIdRaw as string);
+                const linkedProduct = productId ? productsMap.get(productId) : undefined;
+
+                const rawImages = record.get('images');
+                const images = Array.isArray(rawImages)
+                    ? rawImages.map((img: any) => img.url)
+                    : (typeof rawImages === 'string' ? [rawImages] : []);
+
+                const post: CommunityPost = {
+                    id: record.id,
+                    author: author,
+                    content: (record.get('content') as string) || (record.get('Content') as string) || '',
+                    images: images,
+                    product: linkedProduct,
+                    hashtags: (record.get('hashtags') as string)?.split(' ') || [],
+                    timestamp: (record.get('timestamp') as string) || (record.get('Timestamp') as string) || new Date().toISOString(),
+                    likes: (record.get('likes') as number) || 0,
+                    replies: (record.get('replies') as number) || 0,
                 };
+
+                author.posts.push(post);
+                return post;
+            } catch (err) {
+                console.error(`❌ Error processing post record ${record.id}:`, err);
+                throw err;
             }
-
-            const productIdRaw = record.get('product_id') || record.get('Product_ID');
-            const productId = Array.isArray(productIdRaw) ? productIdRaw[0] : (productIdRaw as string);
-            const linkedProduct = productId ? productsMap.get(productId) : undefined;
-
-            const post: CommunityPost = {
-                id: record.id,
-                author: author,
-                content: (record.get('content') as string) || (record.get('Content') as string) || '',
-                images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : [],
-                product: linkedProduct,
-                hashtags: (record.get('hashtags') as string)?.split(' ') || [],
-                timestamp: (record.get('timestamp') as string) || (record.get('Timestamp') as string) || new Date().toISOString(),
-                likes: (record.get('likes') as number) || 0,
-                replies: (record.get('replies') as number) || 0,
-            };
-
-            // Link post to author
-            author.posts.push(post);
-            return post;
         });
 
         return { products, posts };
