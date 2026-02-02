@@ -26,6 +26,38 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
             if (customId) makersMap.set(customId, m);
         });
 
+        // Fetch Posts (safely)
+        let postsRecords: any = [];
+        try {
+            postsRecords = await base('Posts').select({ view: 'Grid view' }).all();
+        } catch (e) {
+            console.warn('Could not fetch Posts table. Community feed will be empty.', e);
+        }
+
+        // Map posts by Author ID
+        const postsByAuthor = new Map<string, any[]>();
+
+        postsRecords.forEach((record: any) => {
+            const authorIdRaw = record.get('author_id');
+            const authorId = Array.isArray(authorIdRaw) ? authorIdRaw[0] : (authorIdRaw as string);
+
+            if (authorId) {
+                const current = postsByAuthor.get(authorId) || [];
+                // We'll construct the full post object later when we have the User object
+                current.push({
+                    id: record.id,
+                    content: (record.get('content') as string) || '',
+                    images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : [],
+                    hashtags: (record.get('hashtags') as string)?.split(' ') || [],
+                    timestamp: (record.get('timestamp') as string) || new Date().toISOString(),
+                    likes: (record.get('likes') as number) || 0,
+                    replies: (record.get('replies') as number) || 0,
+                    // Author will be injected
+                });
+                postsByAuthor.set(authorId, current);
+            }
+        });
+
         // Fetch Products
         const productRecords = await base('Products').select({
             view: 'Grid view'
@@ -37,16 +69,21 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
             let makerRecord;
 
             if (Array.isArray(creatorIdRaw) && creatorIdRaw.length > 0) {
-                // Linked Record (returns array of IDs)
                 makerRecord = makersMap.get(creatorIdRaw[0]);
             } else if (typeof creatorIdRaw === 'string') {
-                // Text match
                 makerRecord = makersMap.get(creatorIdRaw);
             }
 
             // Construct Creator Object
+            const creatorId = makerRecord ? ((makerRecord.get('id') as string) || makerRecord.id) : 'unknown';
+
+            // Get posts for this creator
+            const rawPosts = postsByAuthor.get(creatorId) || [];
+            // We need to inject the author object into the posts now that we are creating it
+            // To avoid circular issues during creation, we create 'authorRef'
+
             const creatorObj = makerRecord ? {
-                id: (makerRecord.get('id') as string) || makerRecord.id,
+                id: creatorId,
                 name: (makerRecord.get('name') as string) || 'Anonymous Maker',
                 username: (makerRecord.get('username') as string) || 'anonymous',
                 bio: (makerRecord.get('bio') as string) || '',
@@ -54,9 +91,9 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
                 badge: (makerRecord.get('badge') as UserBadge) || 'Maker',
                 credibility_score: (makerRecord.get('credibility_score') as number) || 100,
                 avatar: makerRecord.get('avatar') ? (makerRecord.get('avatar') as any[])[0]?.url : undefined,
-                products: [], // We don't populate reverse links here to avoid circular dep for now
+                products: [],
                 contributions: [],
-                posts: []
+                posts: [] as any[] // Will populate below
             } : {
                 id: 'unknown',
                 name: 'Anonymous Maker',
@@ -69,6 +106,14 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
                 contributions: [],
                 posts: []
             };
+
+            // Link posts to creator and inject author
+            if (rawPosts.length > 0) {
+                creatorObj.posts = rawPosts.map(p => ({
+                    ...p,
+                    author: creatorObj // Circular reference, but valid in JS
+                }));
+            }
 
             return {
                 id: record.id,
