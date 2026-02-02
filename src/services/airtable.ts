@@ -1,5 +1,5 @@
 import Airtable from 'airtable';
-import { Product, ProductCategory, ProductStatus, SkillLevel, UserBadge } from '@/types';
+import { CommunityPost, Product, ProductCategory, ProductStatus, SkillLevel, User, UserBadge } from '@/types';
 
 const API_KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
 const BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID;
@@ -28,111 +28,67 @@ const fetchTableSafely = async (tableName: string) => {
     }
 };
 
-export const fetchAirtableProducts = async (): Promise<Product[]> => {
+export const fetchAirtableData = async (): Promise<{ products: Product[], posts: CommunityPost[] }> => {
     try {
-        // Fetch Makers and Posts
+        // 1. Fetch all raw data
         const makersRecords = await fetchTableSafely('Makers');
         const postsRecords = await fetchTableSafely('Posts');
-
-        const makersMap = new Map();
-        makersRecords.forEach(m => {
-            // Map by internal Record ID (for Linked Records)
-            makersMap.set(m.id, m);
-            // Also map by custom 'id' field (for text matching)
-            const customId = m.get('id') as string || m.get('ID') as string;
-            if (customId) makersMap.set(customId, m);
-        });
-
-        // Map posts by Author ID
-        const postsByAuthor = new Map<string, any[]>();
-
-        console.log(`📡 Airtable: Found ${makersRecords.length} makers and ${postsRecords.length} posts`);
-
-        postsRecords.forEach((record: any) => {
-            const authorIdRaw = record.get('creator_id') || record.get('ID') || record.get('author_id');
-            const authorId = Array.isArray(authorIdRaw) ? authorIdRaw[0] : (authorIdRaw as string);
-
-            if (authorId) {
-                const current = postsByAuthor.get(authorId) || [];
-                // We'll construct the full post object later when we have the User object
-                current.push({
-                    id: record.id,
-                    content: (record.get('content') as string) || (record.get('Content') as string) || '',
-                    images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : [],
-                    hashtags: (record.get('hashtags') as string)?.split(' ') || [],
-                    timestamp: (record.get('timestamp') as string) || new Date().toISOString(),
-                    likes: (record.get('likes') as number) || 0,
-                    replies: (record.get('replies') as number) || 0,
-                    // Author will be injected
-                });
-                postsByAuthor.set(authorId, current);
-            }
-        });
-
-        // Fetch Products
         const productRecords = await fetchTableSafely('Products');
-        console.log(`📡 Airtable: Found ${productRecords.length} products`);
 
-        return productRecords.map(record => {
-            // Resolve Creator
-            const creatorIdRaw = record.get('creator_id') || record.get('Creator_ID');
-            let makerRecord;
+        console.log(`📡 Airtable: Found ${makersRecords.length} makers, ${postsRecords.length} posts, ${productRecords.length} products`);
 
-            if (Array.isArray(creatorIdRaw) && creatorIdRaw.length > 0) {
-                makerRecord = makersMap.get(creatorIdRaw[0]);
-            } else if (typeof creatorIdRaw === 'string') {
-                makerRecord = makersMap.get(creatorIdRaw);
-            }
+        // 2. Pre-process Makers into a Map of Creator objects (initially empty products/posts)
+        const makersMap = new Map<string, User>();
+        const internalMakersRecords = new Map<string, any>();
 
-            // Construct Creator Object
-            const creatorId = makerRecord ? ((makerRecord.get('id') as string) || makerRecord.id) : 'unknown';
-
-            // Get posts for this creator
-            const rawPosts = postsByAuthor.get(creatorId) || [];
-            // We need to inject the author object into the posts now that we are creating it
-            // To avoid circular issues during creation, we create 'authorRef'
-
-            const creatorObj = makerRecord ? {
-                id: creatorId,
-                name: (makerRecord.get('name') as string) || 'Anonymous Maker',
-                username: (makerRecord.get('username') as string) || 'anonymous',
-                bio: (makerRecord.get('bio') as string) || '',
-                location: (makerRecord.get('location') as string) || '',
-                badge: (makerRecord.get('badge') as UserBadge) || 'Maker',
-                credibility_score: (makerRecord.get('credibility_score') as number) || 100,
-                avatar: makerRecord.get('avatar') ? (makerRecord.get('avatar') as any[])[0]?.url : undefined,
-                products: [],
-                contributions: [],
-                posts: [] as any[] // Will populate below
-            } : {
-                id: 'unknown',
-                name: 'Anonymous Maker',
-                username: 'anonymous',
-                bio: '',
-                location: '',
-                badge: 'Maker' as UserBadge,
-                credibility_score: 100,
+        makersRecords.forEach(m => {
+            const id = (m.get('id') as string || m.get('ID') as string) || m.id;
+            const creatorObj: User = {
+                id,
+                name: (m.get('name') as string) || (m.get('Name') as string) || 'Anonymous Maker',
+                username: (m.get('username') as string) || (m.get('Username') as string) || 'anonymous',
+                bio: (m.get('bio') as string) || (m.get('Bio') as string) || '',
+                location: (m.get('location') as string) || '',
+                badge: (m.get('badge') as UserBadge) || 'Maker',
+                credibility_score: (m.get('credibility_score') as number) || 100,
+                avatar: m.get('avatar') ? (m.get('avatar') as any[])[0]?.url : undefined,
                 products: [],
                 contributions: [],
                 posts: []
             };
+            makersMap.set(id, creatorObj);
+            makersMap.set(m.id, creatorObj); // Also map by internal Airtable ID
+            internalMakersRecords.set(id, m);
+        });
 
-            // Link posts to creator and inject author
-            if (rawPosts.length > 0) {
-                creatorObj.posts = rawPosts.map(p => ({
-                    ...p,
-                    author: creatorObj // Circular reference, but valid in JS
-                }));
+        // 3. Process Products
+        const products: Product[] = productRecords.map(record => {
+            const creatorIdRaw = record.get('creator_id') || record.get('Creator_ID');
+            const creatorId = Array.isArray(creatorIdRaw) ? creatorIdRaw[0] : (creatorIdRaw as string);
+
+            let creator = makersMap.get(creatorId);
+            if (!creator) {
+                // Create a placeholder if maker not found
+                creator = {
+                    id: creatorId || 'unknown',
+                    name: 'Anonymous Maker',
+                    username: 'anonymous',
+                    badge: 'Maker',
+                    credibility_score: 100,
+                    products: [],
+                    contributions: [],
+                    posts: []
+                };
             }
 
-            return {
+            const product: Product = {
                 id: record.id,
-                name: (record.get('name') as string) || 'Untitled Product',
-                category: (record.get('category') as ProductCategory) || 'Other',
+                name: (record.get('name') as string) || (record.get('Name') as string) || 'Untitled Product',
+                category: (record.get('category') as ProductCategory) || 'Other' as any,
                 description: (record.get('description') as string) || '',
                 price: (record.get('price') as number) || 0,
                 images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : ['📦'],
-                creator: creatorObj,
+                creator: creator,
                 status: (record.get('status') as ProductStatus) || 'Available',
                 upvotes: (record.get('upvotes') as number) || 0,
                 privacy_verified: (record.get('privacy_verified') as boolean) || false,
@@ -141,11 +97,66 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
                 skill_level: (record.get('skill_level') as SkillLevel) || 'Beginner',
                 external_link: (record.get('external_link') as string) || ''
             };
+
+            // Link product to creator
+            creator.products.push(product);
+            return product;
         });
+
+        // Create a quick lookup for products by ID
+        const productsMap = new Map(products.map(p => [p.id, p]));
+
+        // 4. Process Posts
+        const posts: CommunityPost[] = postsRecords.map(record => {
+            const creatorIdRaw = record.get('creator_id') || record.get('author_id') || record.get('ID');
+            const creatorId = Array.isArray(creatorIdRaw) ? creatorIdRaw[0] : (creatorIdRaw as string);
+
+            let author = makersMap.get(creatorId);
+            if (!author) {
+                author = {
+                    id: creatorId || 'unknown',
+                    name: 'Anonymous Maker',
+                    username: 'anonymous',
+                    badge: 'Maker',
+                    credibility_score: 100,
+                    products: [],
+                    contributions: [],
+                    posts: []
+                };
+            }
+
+            const productIdRaw = record.get('product_id') || record.get('Product_ID');
+            const productId = Array.isArray(productIdRaw) ? productIdRaw[0] : (productIdRaw as string);
+            const linkedProduct = productId ? productsMap.get(productId) : undefined;
+
+            const post: CommunityPost = {
+                id: record.id,
+                author: author,
+                content: (record.get('content') as string) || (record.get('Content') as string) || '',
+                images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : [],
+                product: linkedProduct,
+                hashtags: (record.get('hashtags') as string)?.split(' ') || [],
+                timestamp: (record.get('timestamp') as string) || (record.get('Timestamp') as string) || new Date().toISOString(),
+                likes: (record.get('likes') as number) || 0,
+                replies: (record.get('replies') as number) || 0,
+            };
+
+            // Link post to author
+            author.posts.push(post);
+            return post;
+        });
+
+        return { products, posts };
     } catch (error) {
         console.error('Error fetching from Airtable:', error);
         throw error;
     }
+};
+
+// Keep deprecated export for compatibility during transition
+export const fetchAirtableProducts = async (): Promise<Product[]> => {
+    const { products } = await fetchAirtableData();
+    return products;
 };
 
 export const upvoteAirtableProduct = async (id: string, currentUpvotes: number) => {

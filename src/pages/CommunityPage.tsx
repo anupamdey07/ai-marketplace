@@ -1,21 +1,13 @@
 import { motion } from 'framer-motion';
 import { useProductStore } from '@/store/useProductStore';
-import { CommunityPost } from '@/types';
 import { Link } from 'react-router-dom';
 import Badge from '@/components/common/Badge';
 
 export default function CommunityPage() {
-    const { products } = useProductStore();
-
-    // Extract all posts from all products' creators
-    // This is a bit disparate, so we flatten them into a single array
-    const allPosts: CommunityPost[] = products.flatMap(product => product.creator.posts || []);
-
-    // Deduplicate posts based on ID (users might be listed multiple times if they have multiple products)
-    const uniquePosts = Array.from(new Map(allPosts.map(post => [post.id, post])).values());
+    const { posts } = useProductStore();
 
     // Sort by timestamp descending
-    const sortedPosts = uniquePosts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    const sortedPosts = [...posts].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return (
         <div className="bg-background min-h-screen pt-24 pb-20">
@@ -66,11 +58,26 @@ export default function CommunityPage() {
                                     <div className="ml-auto">
                                         <button className="text-charcoal/30 hover:text-primary transition-colors">
                                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                                             </svg>
                                         </button>
                                     </div>
                                 </div>
+
+                                {/* Link to Product if present */}
+                                {post.product && (
+                                    <div className="px-4 pb-2">
+                                        <Link
+                                            to={`/products/${post.product.slug}`}
+                                            className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline bg-accent/5 px-2 py-1 rounded-full"
+                                        >
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                            </svg>
+                                            {post.product.name}
+                                        </Link>
+                                    </div>
+                                )}
 
                                 {/* Image */}
                                 {post.images && post.images.length > 0 && (
