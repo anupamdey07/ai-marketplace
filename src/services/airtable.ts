@@ -10,35 +10,46 @@ if (!API_KEY || !BASE_ID) {
 
 const base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
 
+const fetchTableSafely = async (tableName: string) => {
+    try {
+        // Try the name as provided
+        return await base(tableName).select({}).all();
+    } catch (e: any) {
+        // If it fails, try the other casing
+        const alternative = tableName.charAt(0) === tableName.charAt(0).toUpperCase()
+            ? tableName.toLowerCase()
+            : tableName.charAt(0).toUpperCase() + tableName.slice(1);
+        try {
+            return await base(alternative).select({}).all();
+        } catch (e2) {
+            console.warn(`Could not find table "${tableName}" or "${alternative}"`);
+            return [];
+        }
+    }
+};
+
 export const fetchAirtableProducts = async (): Promise<Product[]> => {
     try {
-        // Fetch Makers first
-        const makersRecords = await base('Makers').select({
-            view: 'Grid view'
-        }).all();
+        // Fetch Makers and Posts
+        const makersRecords = await fetchTableSafely('Makers');
+        const postsRecords = await fetchTableSafely('Posts');
 
         const makersMap = new Map();
         makersRecords.forEach(m => {
             // Map by internal Record ID (for Linked Records)
             makersMap.set(m.id, m);
             // Also map by custom 'id' field (for text matching)
-            const customId = m.get('id') as string;
+            const customId = m.get('id') as string || m.get('ID') as string;
             if (customId) makersMap.set(customId, m);
         });
-
-        // Fetch Posts (safely)
-        let postsRecords: any = [];
-        try {
-            postsRecords = await base('Posts').select({ view: 'Grid view' }).all();
-        } catch (e) {
-            console.warn('Could not fetch Posts table. Community feed will be empty.', e);
-        }
 
         // Map posts by Author ID
         const postsByAuthor = new Map<string, any[]>();
 
+        console.log(`📡 Airtable: Found ${makersRecords.length} makers and ${postsRecords.length} posts`);
+
         postsRecords.forEach((record: any) => {
-            const authorIdRaw = record.get('creator_id') || record.get('author_id');
+            const authorIdRaw = record.get('creator_id') || record.get('ID') || record.get('author_id');
             const authorId = Array.isArray(authorIdRaw) ? authorIdRaw[0] : (authorIdRaw as string);
 
             if (authorId) {
@@ -46,7 +57,7 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
                 // We'll construct the full post object later when we have the User object
                 current.push({
                     id: record.id,
-                    content: (record.get('content') as string) || '',
+                    content: (record.get('content') as string) || (record.get('Content') as string) || '',
                     images: record.get('images') ? (record.get('images') as any[]).map((img: any) => img.url) : [],
                     hashtags: (record.get('hashtags') as string)?.split(' ') || [],
                     timestamp: (record.get('timestamp') as string) || new Date().toISOString(),
@@ -59,13 +70,12 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
         });
 
         // Fetch Products
-        const productRecords = await base('Products').select({
-            view: 'Grid view'
-        }).all();
+        const productRecords = await fetchTableSafely('Products');
+        console.log(`📡 Airtable: Found ${productRecords.length} products`);
 
         return productRecords.map(record => {
             // Resolve Creator
-            const creatorIdRaw = record.get('creator_id');
+            const creatorIdRaw = record.get('creator_id') || record.get('Creator_ID');
             let makerRecord;
 
             if (Array.isArray(creatorIdRaw) && creatorIdRaw.length > 0) {
