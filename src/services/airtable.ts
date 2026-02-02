@@ -38,7 +38,7 @@ export const fetchAirtableProducts = async (): Promise<Product[]> => {
         const postsByAuthor = new Map<string, any[]>();
 
         postsRecords.forEach((record: any) => {
-            const authorIdRaw = record.get('author_id');
+            const authorIdRaw = record.get('creator_id') || record.get('author_id');
             const authorId = Array.isArray(authorIdRaw) ? authorIdRaw[0] : (authorIdRaw as string);
 
             if (authorId) {

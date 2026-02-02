@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
 import ProductCard from '@/components/common/ProductCard';
 
-const FILTERS = ['All', 'Trending', 'New', 'Most Voted'];
+const FILTERS = ['All', 'Trending', 'Most Voted'];
 const CATEGORIES = [
     'All',
     'Programmable Robotics',
@@ -152,10 +152,10 @@ export default function ExplorePage() {
                                     <button
                                         key={filter}
                                         onClick={() => setActiveFilter(filter)}
-                                        className={`px - 4 py - 2 rounded - xl text - sm font - bold transition - all ${activeFilter === filter
-                                            ? 'bg-primary text-white shadow-lg'
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${activeFilter === filter
+                                            ? 'bg-primary text-white shadow-md'
                                             : 'text-charcoal/40 hover:text-primary hover:bg-background-light'
-                                            } `}
+                                            }`}
                                     >
                                         {filter}
                                     </button>
